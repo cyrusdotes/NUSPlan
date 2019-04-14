@@ -1,0 +1,67 @@
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background-color: darkgray;
+  font-family: calibri light;
+}
+
+#cp_login_container {
+  display: table;
+  text-align: center;
+  margin: auto;
+  height: 100%;
+  width: 33%;
+  background-color: white;
+}
+
+#cp_login {
+  display: table-cell;
+  vertical-align: middle;
+  width: 100%;
+}
+
+#login_img {
+  width: 30%;
+}
+
+#tb_username {
+  margin-top: 5%;
+  width: 99%;
+  height: 50px;
+  background-color: lightgray;
+  border: 1px solid lightgray;
+  text-align: center;
+  font-family: calibri light;
+  font-size: 20px;
+}
+
+#tb_password {
+  width: 99%;
+  height: 50px;
+  background-color: lightgray;
+  border: 1px solid lightgray;
+  text-align: center;
+  font-family: calibri light;
+  font-size: 20px;
+  -webkit-text-security: circle;
+}
+
+#username_sts,
+#password_sts {
+  color: red;
+  margin-top: 1%;
+  font-size: 13px;
+}
+
+#btn_login {
+  background-color: rgb(255, 217, 102);
+  border: 1px solid rgb(255, 217, 102);
+  width: 30%;
+  height: 60px;
+  font-family: calibri light;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}

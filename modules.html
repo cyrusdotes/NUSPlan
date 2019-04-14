@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="./src/css/modules.css">
+	<link rel="stylesheet" href="./src/css/styles.css">
+</head>
+
+<body>
+	<!-- do not touch cp_navbar -->
+	<div id="cp_navbar">
+    <a href="./planner.html">
+      <div id="welcome">
+        <p id="nav_user"></p>
+      </div>
+    </a>
+
+    <div id="logos">
+        <a href="./modules.html"><img id="md_logo" src="src/assets/modules_logo.png" alt="modules"/></a>
+        <a href="./planner.html"><img id="pn_logo" src="src/assets/planner_logo.png" alt="planner"/></a>
+        <img @click="userLogout()" id="lo_logo" src="src/assets/logout_logo.png" alt="settings" style="cursor: pointer;">
+    </div>
+  </div>
+
+  <!-- do not touch cp_sidebar -->
+  <div id="cp_sidebar">
+    <!-- do not touch cp_modbar -->
+    <div id="cp_modbar">
+
+      <ul style="margin-top: auto;">
+  
+        <li> 
+          <input type="checkbox" id="core_mods_header"/>
+          <label id="core_mods_header_lbl" for="core_mods_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Core Module</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">48/80  &#8801;</span>
+            </div>
+  
+            <div>
+              <ul>
+                <li v-for="module in coreMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="prog_ele_header"/>
+          <label id="prog_ele_header_lbl" for="prog_ele_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Program Electives</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">0/24  &#8801;</span>
+            </div>
+  
+            <div>
+              <ul>
+                <li v-for="module in peMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 100%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="gene_mod_header"/>
+          <label id="gene_mod_header_lbl" for="gene_mod_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">General Modules</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">8/20  &#8801;</span>
+            </div>
+            
+            <div>
+              <ul>
+                <li v-for="module in geMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="unre_ele_header"/>
+          <label id="unre_ele_header_lbl" for="unre_ele_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Unrestricted Electives</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">30/32  &#8801;</span>
+            </div>
+            
+            <div>
+              <ul>
+                <li v-for="module in ueMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: orange; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+
+      </ul>
+
+    </div>
+
+    <div id="cp_addmod">
+      <a href="./moduleadd.html" style="color: gray; text-decoration: none; text-align: center; width: 100%;"
+         onclick="centeredPopup(this.href, 'Add Modules');return false">Add Modules</a>
+    </div>
+    <div id="cp_rec" @click="modRec()">
+      <span style="color: gray; text-decoration: none; text-align: center; width: 100%;">
+        Recommend
+      </span>
+    </div>
+  </div>
+
+  <div class ="row" id= "moduleMgm">
+    <div class="column" id="moduleDisplay">
+      
+      <h1 id="moduleHeader">Modules</h1>
+      <input id="SearchBar" type="text" placeholder="Module Code or Module Name" v-model="modSearch">
+
+      <ul class="column" id="modules">
+        <li v-for="item in modulesFiltered" id="moduleList">
+          <div id="oneMod">
+            <div id="nameRow">
+              <h4 id="modName"> <a v-on:click="logModCode(item.key)" href="./modAnalytic.html">{{ item.key + "  " + item.Name }} </a></h4>
+            </div>
+            <div id="desRow">
+              <h4 id="FacultyLab">{{item.Faculty}}</h4>
+              <h5 id="AvailCredits"> {{ checkSem1(item.Sem1) + "  " +
+                  checkSem2(item.Sem2) + "  " + 
+                  checkSTI(item.STI) + "  " + checkSTII(item.STII) +
+                  " " + item.Credits + " Credits"}} 
+              </h5>
+              <h2 id="Ratings">Average Rating: {{ getRating(item.Sem1_ModRev,item.Sem2_ModRev) }} / 5</h2>
+              <br/>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    
+    <div class="column" id="refineBar">
+      <button @click="sortByRating()" id="Popularity">Sort by Rating</button>
+      <p> </p>
+      <button @click="sortByAlpha()" id="Popularity">Sort by Alphabet</button>
+      <p> </p>
+      <div class="dropdown" id="Faculty">
+          <button class="dropbtn">Faculty</button>
+          <div class="dropdown-content">
+            <a @click = "tickFaculty('all')" href="#">All Faculty</a>
+            <a @click = "tickFaculty('Arts and Social Sciences')" href="#">Arts and Social Sciences</a>
+            <a @click = "tickFaculty('Centre for English Language and Communication')" href="#">Centre for English Language and Communication</a>
+            <a @click = "tickFaculty('Engineering')" href="#">Engineering</a>
+            <a @click = "tickFaculty('School of Business')" href="#">School of Business</a>
+            <a @click = "tickFaculty('School of Computing')" href="#">School of Computing</a>
+            <a @click = "tickFaculty('Science')" href="#">Science</a>
+            <a @click = "tickFaculty('University Administration')" href="#">University Administration</a>
+          </div>
+        </div>
+
+      <div id="Availability">
+        <h5>Availability</h5>
+        <input type="checkbox" @change="tickSem1"> Semester 1 <br>
+        <input type="checkbox" @change="tickSem2"> Semester 2 <br>
+        <input type="checkbox" @change="tickSTI"> Special Term I <br>
+        <input type="checkbox" @change="tickSTII"> Special Term II <br>
+      </div>
+
+      <div id="Level">
+        <h5>Level</h5>
+        <input type="radio" name = "levelCheck" @click = "tickLevel(0)"> All Levels <br>
+        <input type="radio" name = "levelCheck" @click = "tickLevel(1000)"> 1000 <br>
+        <input type="radio"  name = "levelCheck" @click = "tickLevel(2000)"> 2000 <br>
+        <input type="radio"  name = "levelCheck" @click = "tickLevel(3000)"> 3000 <br>
+        <input type="radio"  name = "levelCheck" @click = "tickLevel(4000)"> 4000 <br>
+        <input type="radio"  name = "levelCheck" @click = "tickLevel(5000)"> >4000 <br>
+      </div>
+  
+      <div id="Credits">
+        <h5>Credits</h5> 
+        <input type="radio" name="creditsCheck" @click = "tickCredit(0)"> All Credits <br>
+        <input type="radio" name="creditsCheck" @click = "tickCredit(3)"> 1-3 <br>
+        <input type="radio" name="creditsCheck" @click = "tickCredit(4)"> 4 <br>
+        <input type="radio" name="creditsCheck" @click = "tickCredit(5)"> 5-8 <br>
+        <input type="radio" name="creditsCheck" @click = "tickCredit(8)"> >8 <br>
+      </div>
+
+    </div>
+  </div>
+    
+  <script src="https://unpkg.com/querybase@0.6.0"></script>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+	<script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+
+  <script>
+
+    var db = firebase.initializeApp({ databaseURL: "https://nusplan-e00ab.firebaseio.com/" }).database();
+    
+    var username = sessionStorage.getItem("username");
+    var studentRef = db.ref("student/" + username);
+
+    /* for name display */
+    studentRef.on("value", function(snapshot) {
+      var fullname = snapshot.val()["name"];
+      document.getElementById("nav_user").innerHTML = "Welcome, " + fullname;
+    });
+
+    /* for modules bar */
+    new Vue({
+      el: "#cp_sidebar",
+      data: {
+        sid: username,
+        coreMods: [],
+        peMods: [],
+        geMods: [],
+        ueMods: [],
+        coreMC: '-',
+        peMC: '-',
+        geMC: '-',
+        ueMC: '-'
+      },
+      firebase: {
+        student: studentRef
+      },
+      methods: {
+        modRec: function() {
+          if (confirm('Proceed with our recommended General Modules and Program Electives?')) {
+            var pe = [];
+            var ge = [];
+            studentRef.child('recPE').child('A').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recPE').child('B').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recPE').child('C').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recGE').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                ge.push(childSnapshot.val())
+              });
+            });
+            
+            this.peMods.forEach(function(element) {
+              pe = pe.filter(function(value, index, arr){
+                  return value != element.key;
+              });
+            });
+            this.geMods.forEach(function(element) {
+              ge = ge.filter(function(value, index, arr){
+                  return value.substring(0,3) != element.key.substring(0,3);
+              });
+            });
+
+            pe.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'pe';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
+              });
+            });
+            ge.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'ge';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
+              });
+            });
+          }
+        },
+        deleteMod: function(mod) {
+          if (
+            confirm(
+              "Are you sure you want to delete " + mod.key + ",\n" + mod.name + "?"
+            )
+          ) {
+            studentRef
+              .child("modules")
+              .child(mod.key)
+              .set(null);
+          }
+        },
+        checkMod: function(status) {
+          if (status == "pending" || status == "unfulfilled") {
+            return false;
+          } else {
+            return true;
+          }
+        },
+        updateMods: function() {
+            this.coreMods = [];
+            this.peMods = [];
+            this.geMods = [];
+            this.ueMods = [];
+            var coreTemp = [];
+            var peTemp = [];
+            var geTemp = [];
+            var ueTemp = [];
+            var coreMC = 0;
+            var peMC = 0;
+            var geMC = 0;
+            var ueMC = 20;
+            studentRef.child('modules').orderByChild('level').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                if (childSnapshot.val().type == 'core') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  coreTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    coreMC += item.mc;
+                  }
+                } else if (childSnapshot.val().type == 'pe') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  peTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    peMC += item.mc;
+                  }
+                } else if (childSnapshot.val().type == 'ge') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  geTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    geMC += item.mc;
+                  }
+                } else {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  ueTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    ueMC += item.mc;
+                  }
+                }
+              });
+            });
+            this.coreMods = coreTemp;
+            this.peMods = peTemp;
+            this.geMods = geTemp;
+            this.ueMods = ueTemp;
+            this.coreMC = coreMC;
+            this.peMC = peMC;
+            this.geMC = geMC;
+            this.ueMC = ueMC;
+          },
+        },
+      mounted() {
+        this.updateMods();
+      },
+      beforeUpdate() {
+        this.updateMods();
+      }
+    });
+
+    /* for logout button */
+    new Vue({
+      el: "#lo_logo",
+      methods: {
+        userLogout: function() {
+          sessionStorage.removeItem("username");
+          window.location.href = "./index.html";
+        }
+      }
+    });
+
+    /* for module add button */
+    var popupWindow = null;
+
+    function centeredPopup(url, winName) {
+      winheight = screen.height ? screen.height / 2 : 700;
+      winwidth = screen.width ? screen.width / 2 : 700;
+      LeftPosition = screen.width ? (screen.width - winwidth) / 2 : 0;
+      TopPosition = screen.height ? (screen.height - winheight) / 2 : 0;
+      settings =
+        "location=no, height=" +
+        winheight +
+        ",width=" +
+        winwidth +
+        ",top=" +
+        TopPosition +
+        ",left=" +
+        LeftPosition +
+        ",scrollbars=no, titlebar=no";
+      popupWindow = window.open(url, winName, settings);
+    }
+    var moduleRef = db.ref("modules");
+    var fullList = [];
+    moduleRef.on("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var item = childSnapshot.val();
+          item.key = childSnapshot.key;
+          fullList.push(item);
+        });
+      });
+
+    new Vue({
+      el: "#moduleMgm",
+      data: {
+        modulesFull: fullList,
+        sem1Check: false,
+        sem2Check: false,
+        STICheck: false,
+        STIICheck: false,
+        levelCheck: 0,
+        creditCheck:0,
+        facultyCheck:"all",
+        ratingSort:false,
+        alphaSort:true,
+        modSearch:""
+      },
+      firebase: {
+        module: moduleRef
+      },
+      mounted() {
+        //console.log("hello");
+      },
+      methods: {
+        checkSem1: function(sem1) {
+          if (sem1 == 1) {
+            return "Sem 1 .";
+          } else {
+            return "";
+          }
+        },
+        checkSem2: function(sem2) {
+          if (sem2 == 1) {
+            return "Sem 2 .";
+          } else {
+            return "";
+          }
+        },
+        checkSTI: function(STI) {
+          if (STI == 1) {
+            return "Special Term I .";
+          } else {
+            return "";
+          }
+        },
+        checkSTII: function(STII) {
+          if (STII == 1) {
+            return "Special Term II .";
+          } else {
+            return "";
+          }
+        }, 
+        getRating: function(sem1,sem2) {
+          if (sem1==null) {
+            sem1 = 0;
+          }
+          if (sem2==null) {
+            sem2 = 0;
+          }
+          let total = sem1+sem2;
+          //console.log(total/2);
+          return total/2;
+        },
+        tickSem1: function() {
+          if (this.sem1Check){
+            this.sem1Check = false;
+          }else{
+            this.sem1Check = true;
+          }
+          
+        },
+        tickSem2: function() {
+          if (this.sem2Check){
+            this.sem2Check = false;
+          }else{
+            this.sem2Check = true;
+          }
+        },
+
+        tickSTI: function() {
+          if (this.STICheck){
+            this.STICheck = false;
+          }else{
+            this.STICheck = true;
+          }
+        },
+
+        tickSTII: function(){
+          if (this.STIICheck){
+            this.STIICheck = false;
+          }else{
+            this.STIICheck = true;
+          }
+        },
+        tickLevel:function(level){
+          this.levelCheck = level;
+        },
+        tickCredit:function(credit){
+          this.creditCheck = credit;
+
+        },
+        tickFaculty:function(faculty){
+          this.facultyCheck = faculty;
+        },
+        sortByRating:function(faculty){
+          this.ratingSort = true;
+          this.alphaSort = false;
+        },
+        sortByAlpha:function(faculty){
+          this.ratingSort = false;
+          this.alphaSort = true;
+        },
+        logModCode:function(modCode){
+          sessionStorage.setItem("modCode", modCode)
+        }
+      },
+      computed:{
+        modulesFiltered(){
+          let filterModList = this.modulesFull;
+
+          if(this.modSearch != ""){
+            filterModList = filterModList.filter(mod => {
+              if (this.modSearch.length<3){
+                return mod.key.toLowerCase().includes(this.modSearch.toLowerCase())
+              }else{
+              return (mod.key.toLowerCase().includes(this.modSearch.toLowerCase()) || mod.Name.toLowerCase().includes(this.modSearch.toLowerCase()));
+            }
+  
+          });
+          }
+
+          if(this.sem1Check){
+            filterModList = filterModList.filter( mod  => mod.Sem1 == 1);
+          }
+          if(this.sem2Check){
+            filterModList = filterModList.filter( mod  => mod.Sem2 == 1);
+          }
+          if(this.STICheck){
+            filterModList = filterModList.filter( mod  => mod.STI == 1);
+          }
+          if(this.STIICheck){
+            filterModList = filterModList.filter( mod  => mod.STII == 1);
+          }
+
+          let level = this.levelCheck;
+          if (level != 0){
+            if (level == 1000){
+              filterModList = filterModList.filter( mod  =>  mod.Level == 1000);
+            } else if (level == 2000){
+              filterModList = filterModList.filter( mod  => mod.Level == 2000);
+            } else if (level == 3000){
+              filterModList = filterModList.filter( mod  => mod.Level == 3000);
+            } else if (level == 4000){
+              filterModList = filterModList.filter( mod  => mod.Level == 4000);
+            } else{
+              filterModList = filterModList.filter( mod  => mod.Level>= 5000);
+            }
+          };
+           
+           let credit = this.creditCheck;
+           if (credit != 0){
+            if (credit == 3){
+              filterModList = filterModList.filter( mod  =>  mod.Credits <4);
+            }else if(credit == 4){
+              filterModList = filterModList.filter( mod  =>  mod.Credits ==4);
+            }else if(credit == 5){
+              filterModList = filterModList.filter( mod  => (mod.Credits >4 && mod.Credits <8));
+            }else if(credit == 8){
+              filterModList = filterModList.filter( mod  =>  mod.Credits >8);
+            }
+           };
+
+            let faculty = this.facultyCheck;
+            if(faculty != 'all'){
+                filterModList = filterModList.filter( mod  =>  mod.Faculty == faculty);
+              };
+
+            if (this.ratingSort){
+              filterModList = filterModList.sort((a,b) => {
+                return this.getRating(b.Sem1_ModRev, b.Sem2_ModRev) -  this.getRating(a.Sem1_ModRev, a.Sem2_ModRev);
+              })
+            };
+            
+            if(this.alphaSort){
+              filterModList = filterModList.sort((a,b) =>{
+                return a.key.localeCompare(b.key);
+              });
+            };
+      
+         return filterModList;
+        },
+
+      }
+    });
+     
+
+  </script>
+
+  
+</body>
+
+</html>

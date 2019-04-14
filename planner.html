@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="./src/css/planner.css" />
+    <link rel="stylesheet" href="./src/css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <!-- do not touch cp_navbar -->
+    <div id="cp_navbar">
+      <a href="./planner.html">
+        <div id="welcome"><p id="nav_user"></p></div>
+      </a>
+
+      <div id="logos">
+        <a href="./modules.html"
+          ><img id="md_logo" src="src/assets/modules_logo.png" alt="modules"
+        /></a>
+        <a href="./planner.html"
+          ><img id="pn_logo" src="src/assets/planner_logo.png" alt="planner"
+        /></a>
+        <img @click="userLogout()" id="lo_logo" src="src/assets/logout_logo.png" alt="settings" style="cursor: pointer;">
+      </div>
+    </div>
+
+
+<div id=whole_planner>
+  <!--side module bar-->
+  <div id="cp_sidebar">
+    <!-- do not touch cp_modbar -->
+    <div id="cp_modbar">
+
+      <ul style="margin-top: auto;">
+  
+        <li> 
+          <input type="checkbox" id="core_mods_header"/>
+          <label id="core_mods_header_lbl" for="core_mods_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Core Module</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">48/80  &#8801;</span>
+            </div>
+  
+            <div>
+              <ul>
+                <li v-for="module in coreMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input type = "checkbox" class="cp_modbarChkBox" v-bind:value="module.key + ' - ' + module.name" v-model="modbar_chklist"  @change="addBtnRules()"></input> 
+                  <input class="cp_modbarLabel" :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light;">
+                  </input>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="prog_ele_header"/>
+          <label id="prog_ele_header_lbl" for="prog_ele_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Program Electives</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">0/24  &#8801;</span>
+            </div>
+  
+            <div>
+              <ul>
+                <li v-for="module in peMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input type = "checkbox" class="cp_modbarChkBox" v-bind:value="module.key + ' - ' + module.name" v-model="modbar_chklist"  @change="addBtnRules()"></input> 
+                  <input class="cp_modbarLabel" :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 100%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light;">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px">
+                  
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="gene_mod_header"/>
+          <label id="gene_mod_header_lbl" for="gene_mod_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">General Modules</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">8/20  &#8801;</span>
+            </div>
+            
+            <div>
+              <ul>
+                <li v-for="module in geMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input type = "checkbox" class="cp_modbarChkBox" v-bind:value="module.key + ' - ' + module.name" v-model="modbar_chklist"  @change="addBtnRules()"></input> 
+                  <input class="cp_modbarLabel" :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="unre_ele_header"/>
+          <label id="unre_ele_header_lbl" for="unre_ele_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Unrestricted Electives</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">30/32  &#8801;</span>
+            </div>
+            
+            <div>
+              <ul>
+                <li v-for="module in ueMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input type = "checkbox" class="cp_modbarChkBox" v-bind:value="module.key + ' - ' + module.name" v-model="modbar_chklist"  @change="addBtnRules()"></input> 
+                  <input class="cp_modbarLabel" :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: orange; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+
+      </ul>
+
+    </div>
+
+    <div id="cp_addmod">
+      <a href="./moduleadd.html" style="color: gray; text-decoration: none; text-align: center; width: 100%;"
+         onclick="centeredPopup(this.href, 'Add Modules');return false">Add Modules</a>
+    </div>
+    <div id="cp_rec" @click="modRec()">
+      <span style="color: gray; text-decoration: none; text-align: center; width: 100%;">
+        Recommend
+      </span>
+    </div>
+  </div>
+
+  <!--Progress-->
+  <div id="Progress">
+  <div id = "ProgressLabel">
+
+    <!--Modules Category-->
+    <label id = "statuslbl1"> Core Modules</label>
+    <label class = "statuslbl"> Program Electives </label>
+    <label class = "statuslbl"> General Education Modules</label>
+    <label class = "statuslbl"> Unrestricted Electives </label>
+    <label id = "statuslbl5"> All</label>
+    </div>
+
+    <!--Progress Bar-->
+    <div class="progressBar" id="coreModProgressBar">
+        <div class="Bar" id="Core"></div>
+    </div>
+    <div class="progressBar" id="PEModProgressBar">
+       <div class="Bar" id="PE"></div>
+    </div>
+    <div class="progressBar" id="GEModProgressBar">
+        <div class="Bar" id="GE"></div>
+    </div>
+    <div class="progressBar" id="UEModProgressBar">
+        <div class="Bar" id="UE"></div>
+    </div>
+    <div class="progressBar" id="AllModProgressBar">
+        <div class="Bar" id="All"></div>
+    </div>
+    <!--Percentage-->
+    <div id="Percent">
+     <label  id="CorePercent">0%</label>
+     <label  id="PEPercent">0%</label>
+     <label  id="GEPercent">0%</label>
+     <label  id="UEPercent">0%</label>
+     <label  id="AllPercent">0%</label>
+    </div>
+  </div>
+
+
+  <!--Planner Table-->
+  <div id="main_planner">
+      <table id="planner_table">
+        <thead>
+          <tr >
+              <th></th>
+              <th class = "planner_year" v-for = "i in num_year">Year {{i}}</th>
+          </tr>
+        </thead>
+        <tbody class = "planner_row"></tbody>
+        <tr class = "planner_row" v-for = "(sem,index) in semesterList">
+          <td class = "planner_semester"> {{sem}}</td>
+          <td class = "planner_cell" v-for = "year in num_year">
+              <label class=MClabel v-bind:id="labelClass(index,year)">Total MCs:0 </label>
+              <button v-bind:class = "addBtnClass(index)" v-bind:disabled="addDisabled(index)" v-on:click="addBtn(index,year)" @change="addBtnRules()">Add</button>
+              <button v-bind:class = "removeBtnClass(index)" id="index" disabled v-on:click="removeBtn(index,year)">Remove</button>
+              
+
+          </td>
+      </tr>
+
+   
+      </tbody>       
+        </table> 
+
+        <div>
+          <label id="preClu" hidden></label>
+        </div>
+          <!--Buttons for below-->
+          <div id="lastRow" style="margin-left:26%; width:100">
+              <div id="btn" style= "float:left;">
+                <div class= "button">
+                  <button id = "planner_specialTermIBtn" class = "planner_specialTermBtn" @click="specialTermI()">Add Special Term I</button>
+                  <button id = "planner_addYear"  class = "planner_yearBtn" @click="addYear()">Add Year</button>
+                  <button id = "recommendedTimeTable" @click ="prePopulate()">Recommended Timetable</button>
+                </div>
+                <div class= "button">
+                  <button id = "planner_specialTermIIBtn"class = "planner_specialTermBtn" @click="specialTermII()">Add Special Term II</button>
+                  <button id = "planner_removeYear" class = "planner_yearBtn" @click= "removeYear()">Remove Year</button>
+                  <button class = "clearBtn" @click= "clearBtn()"> Clear Planner </button>
+                </div>
+
+              </div>
+              <div id="pre-req"></div>
+          </div>
+      
+</div>
+
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+  <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+  <script>
+    var db = firebase.initializeApp({ databaseURL: "https://nusplan-e00ab.firebaseio.com/" }).database();
+    
+    var username = sessionStorage.getItem("username");
+    var studentRef = db.ref("student/"+username);
+    var moduleListRef = db.ref("modules");
+    var courseRef= db.ref("courses");
+
+    /* for name display */
+    studentRef.on("value", function(snapshot) {
+      var fullname = snapshot.val()["name"];
+      document.getElementById("nav_user").innerHTML = "Welcome, " + fullname;
+    });
+
+
+    /* for wholeplanner */
+    var plan = new Vue({
+      el: "#whole_planner",
+      data: {
+        sid: username,
+        modbar_chklist:[], //stored the checked modules from cp modbar
+        progressbarCore:0,
+        progressbarPE:0,
+        progressbarGEM:0,
+        progressbarUE:0,
+        progressbarAll:0,
+        coreMods: [],
+        peMods: [],
+        geMods: [],
+        ueMods: [],
+        coreMC: '-',
+        peMC: '-',
+        geMC: '-',
+        ueMC: '-',
+        coreModsMC: 0,
+        peModsMC:0,
+        geModsMC:0,
+        ueModsMC:0,
+        disabledStatus:[true,true,true,true],
+        row: 3, //row number of the table
+        num_year:4,
+        semesterList: ["Semester 1", "Semester 2"],
+        allMods:[],
+        mcsList:
+        {
+          y1s1:0,
+          y1s2:0,
+          y1s3:0,
+          y1s4:0,
+
+          y2s1:0,
+          y2s2:0,
+          y2s3:0,
+          y2s4:0,
+
+          y3s1:0,
+          y3s2:0,
+          y3s3:0,
+          y3s4:0,
+
+          y4s1:0,
+          y4s2:0,
+          y4s3:0,
+          y4s4:0,
+
+          y5s1:0,
+          y5s2:0,
+          y5s3:0,
+          y5s4:0,
+
+          y6s1:0,
+          y6s2:0,
+          y6s3:0,
+          y6s4:0,
+        },
+        timetable:
+        {
+          y1s1:[],
+          y1s2:[],
+          y1s3:[],
+          y1s4:[],
+
+          y2s1:[],
+          y2s2:[],
+          y2s3:[],
+          y2s4:[],
+
+          y3s1:[],
+          y3s2:[],
+          y3s3:[],
+          y3s4:[],
+
+          y4s1:[],
+          y4s2:[],
+          y4s3:[],
+          y4s4:[],
+
+          y5s1:[],
+          y5s2:[],
+          y5s3:[],
+          y5s4:[],
+
+          y6s1:[],
+          y6s2:[],
+          y6s3:[],
+          y6s4:[]
+        },
+        semesters: [
+        /*note that specialterm1 and 2 is refered to
+         as sem 3 and 4 for function purposes
+         */
+        {
+          year: 1,
+          semester1: [],
+          semester2: [],
+          special1: [],
+          special2: []
+        },{
+          year: 2,
+          semester1: [],
+          semester2: [],
+          special1: [],
+          special2: []
+        },{
+          year: 3,
+          semester1: [],
+          semester2: [],
+          special1: [],
+          special2: []
+        },{
+          year: 4,
+          semester1: [],
+          semester2: [],
+          special1: [],
+          special2: []
+        }],
+      },
+
+      firebase: {
+        student: studentRef,
+        modules: studentRef.child('modules'),
+        moduleList: moduleListRef,
+        course: courseRef
+      }, 
+
+      methods: {
+
+        //CP MOD BAR
+        modRec: function() {
+            if (confirm('Proceed with our recommended General Modules and Program Electives?')) {
+              var pe = [];
+              var ge = [];
+              studentRef.child('recPE').child('A').child('0').on('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                  pe.push(childSnapshot.val())
+                });
+              });
+              studentRef.child('recPE').child('B').child('0').on('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                  pe.push(childSnapshot.val())
+                });
+              });
+              studentRef.child('recPE').child('C').child('0').on('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                  pe.push(childSnapshot.val())
+                });
+              });
+              studentRef.child('recGE').on('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                  ge.push(childSnapshot.val())
+                });
+              });
+              
+              this.peMods.forEach(function(element) {
+                pe = pe.filter(function(value, index, arr){
+                    return value != element.key;
+                });
+              });
+              this.geMods.forEach(function(element) {
+                ge = ge.filter(function(value, index, arr){
+                    return value.substring(0,3) != element.key.substring(0,3);
+                });
+              });
+
+              pe.forEach(function(element) {
+                db.ref('modules').child(element).on("value", function(snapshot) {
+                  var credit = snapshot.val().Credits;
+                  var level = element.match(/\d/)[0];
+                  var name = snapshot.val().Name;
+                  var item = {
+                    exam: "-",
+                    grade: "-",
+                    status: "pending"
+                  };
+                  item["mc"] = credit;
+                  item["name"] = name;
+                  item["level"] = level;
+                  item["type"] = 'pe';
+                  studentRef
+                    .child("modules")
+                    .child(element)
+                    .push(element);
+                  studentRef
+                    .child("modules")
+                    .child(element)
+                    .set(item);
+                });
+              });
+              ge.forEach(function(element) {
+                db.ref('modules').child(element).on("value", function(snapshot) {
+                  var credit = snapshot.val().Credits;
+                  var level = element.match(/\d/)[0];
+                  var name = snapshot.val().Name;
+                  var item = {
+                    exam: "-",
+                    grade: "-",
+                    status: "pending"
+                  };
+                  item["mc"] = credit;
+                  item["name"] = name;
+                  item["level"] = level;
+                  item["type"] = 'ge';
+                  studentRef
+                    .child("modules")
+                    .child(element)
+                    .push(element);
+                  studentRef
+                    .child("modules")
+                    .child(element)
+                    .set(item);
+                });
+              });
+            }
+          },
+          
+          updateMods: function() {
+            this.coreMods = [];
+            this.peMods = [];
+            this.geMods = [];
+            this.ueMods = [];
+            var coreTemp = [];
+            var peTemp = [];
+            var geTemp = [];
+            var ueTemp = [];
+            var coreMC = 0;
+            var peMC = 0;
+            var geMC = 0;
+            var ueMC = 20;
+            studentRef.child('modules').orderByChild('level').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                if (childSnapshot.val().type == 'core') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  coreTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    coreMC += item.mc;
+                  }
+                } else if (childSnapshot.val().type == 'pe') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  peTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    peMC += item.mc;
+                  }
+                } else if (childSnapshot.val().type == 'ge') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  geTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    geMC += item.mc;
+                  }
+                } else {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  ueTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    ueMC += item.mc;
+                  }
+                }
+              });
+            });
+            this.coreMods = coreTemp;
+            this.peMods = peTemp;
+            this.geMods = geTemp;
+            this.ueMods = ueTemp;
+            this.coreMC = coreMC;
+            this.peMC = peMC;
+            this.geMC = geMC;
+            this.ueMC = ueMC;
+          },
+        deleteMod: function(mod) {
+            if (confirm('Are you sure you want to delete ' + mod.key + ',\n' + mod.name + '?')) {
+              studentRef.child('modules').child(mod.key).set(null);
+            }
+          },
+          checkMod: function(status) {
+            if (status == 'pending' || status == 'unfulfilled') {
+              return false;
+            }
+            else {
+              return true;
+            }
+          },
+
+        //PLANNER TABLE
+        
+
+        //to display on cp mod bar the sem availablility
+        /*semOffered:function(modCode){
+          var key = ["S1","S2","STI","STII"]
+          var moduleRef = db.ref("modules/"+modCode.key);
+
+            moduleRef.on('value',function(snapshot) {
+
+              this.semAvail.push(snapshot.val()['Sem1'])
+              this.semAvail.push(snapshot.val()['Sem2'])
+              this.semAvail.push(snapshot.val()['STI'])
+              this.semAvail.push(snapshot.val()['STII'])
+            });
+            console.log(this.semAvail)
+              var firstindex = list.indexOf(1)
+          var result = key[firstindex] + "/"
+          var lastindex = list.lastIndexOf(1)
+          for(var i=firstindex+1;i<lastindex;i++)
+          {
+            if(list[i]==1)
+            result+=key[i]+"/"
+          }
+
+          if(firstindex != lastindex)
+          result += key[lastindex]
+          else
+          result.substring(0,result.length-1)
+
+          return result
+
+        },*/
+
+        //################To handle the Planner Table########
+        //derive disabled or enabled status iniitally when timetable first display/add new column or row
+        addDisabled:function(index)
+        {
+          return this.disabledStatus[index]
+        },
+        //Derive class name for add and remove button, mc label
+        addBtnClass:function(index)
+        {
+          return "planner_addBtn"+(index+1)
+        },
+        
+        removeBtnClass:function(index)
+        {
+          return "planner_removeBtn"+(index+1)
+        },
+        
+        labelClass:function(index,col)
+        {
+          return "planner_mcLabel"+(index+1)+"_"+col
+        },
+
+        //Add Button to enable and disable accordingly according to check box checked
+        addBtnRules:function(){
+
+           //by default all add btn disabled
+           var total =this.modbar_chklist.length
+          if(this.modbar_chklist.length==0)
+          {
+            for(var i=1;i<this.row;i++)
+            {
+              var j =0
+              while(j<document.getElementsByClassName("planner_addBtn"+i).length)
+              {
+                document.getElementsByClassName("planner_addBtn"+i)[j].disabled = true;
+                j++;
+              }
+            }
+          }
+          // 0 = status yet to change, -1 = cannot add into the cell because there is selected module that is not available that semester, 1 = avaialble and can be added
+          var semStatus= {
+            s1:0,//s1 represent semester 1
+            s2:0,//s2 represent semester 2
+            s3:0,//s3 represent semester 3
+            s4:0,//s3 represent semester 4
+          };
+          var dStatus1;
+          var dStatus2;
+          var dStatus3;
+          var dStatus4;
+
+          for(var i=0;i<this.modbar_chklist.length;i++)
+          {
+            //retrieve value of module code
+            var result = this.modbar_chklist[i] //module code - module name
+            var index = result.indexOf("-") //find index of  dash, "-"
+            var result = result.slice(0,index-1) //module code
+           
+            var moduleRef = db.ref("modules/"+result);
+
+            //loop through the checked modules in cp mod_bar and enable and disable the respective add button accordingly
+            //if module A is available in sem 1 only and module B is available in sem 2 only, none of the add btn will be enable
+            moduleRef.on('value', function(snapshot) {
+              //sem1
+              var sem1 = snapshot.val()['Sem1'];
+              if(sem1==1 &&  semStatus.s1!=-1)
+              semStatus.s1 = 1;
+              else
+              semStatus.s1 = -1;
+              //sem2
+              var sem2 = snapshot.val()['Sem2'];
+              if(sem2==1 && semStatus.s2!=-1)
+              semStatus.s2 = 1;
+              else
+              semStatus.s2 = -1;   
+        
+              //sem3
+              var sem3 = snapshot.val()['STI'];
+              if(sem3==1 && semStatus.s3!=-1)
+              semStatus.s3 = 1;
+              else
+              semStatus.s3=-1;
+            
+              
+              //sem4
+              var sem4 = snapshot.val()['STII'];
+              if(sem4==1 && semStatus.s4!=-1)
+              semStatus.s4 = 1;
+              else
+              semStatus.s4=-1;
+
+              //Once we loop to the last module in modbar_chklist, check if the add button in each cell should be enable or disable
+              // the if enable the add button in respective cell of table while else disable the add button
+            
+              //Semester 1
+              if(i+1==total && semStatus.s1 ==1) 
+              {
+                var j=0;
+                dStatus1 = false;
+                while(j<document.getElementsByClassName("planner_addBtn1").length)
+                {
+                  document.getElementsByClassName("planner_addBtn1")[j].removeAttribute('disabled')
+                  j++;
+                }
+              }
+              else if(i+1==total && semStatus.s1 !=1)
+              {
+                var j=0;
+                dStatus1 = true;
+                while(j<document.getElementsByClassName("planner_addBtn1").length)
+                {
+                  document.getElementsByClassName("planner_addBtn1")[j].disabled = true;
+                  j++;
+                }
+              }
+
+              //Semester 2
+              if(i+1==total && semStatus.s2 ==1)
+              {
+                var j=0;  
+                dStatus2 = false;
+                while(j<document.getElementsByClassName("planner_addBtn2").length)
+                {
+                  document.getElementsByClassName("planner_addBtn2")[j].removeAttribute('disabled')
+                  j++;
+                }
+              }
+              else if(i+1==total && semStatus.s2 !=1)
+              {
+                var j=0;
+                dStatus2 = true;
+                while(j<document.getElementsByClassName("planner_addBtn2").length)
+                {
+                  document.getElementsByClassName("planner_addBtn2")[j].disabled = true;
+                  j++;
+                }
+              }
+
+              //Semester 3 (Special Term I)
+              if(i+1==total && semStatus.s3 ==1)
+              {
+                var j=0;
+                dStatus3 = false;
+                while(j<document.getElementsByClassName("planner_addBtn3").length)
+                {
+                  document.getElementsByClassName("planner_addBtn3")[j].removeAttribute('disabled')
+                  j++;
+                }
+              }
+              else if(i+1==total && semStatus.s3 !=1)
+              {
+                var j=0;
+                dStatus3 = true;
+                while(j<document.getElementsByClassName("planner_addBtn3").length)
+                {
+                  document.getElementsByClassName("planner_addBtn3")[j].disabled = true;
+                  j++;
+                }
+              }
+
+              //Semester 4 (Special Term II)
+              var result =0;
+              if(semStatus.hasOwnProperty("s3"))
+              result = 4
+              else
+              result = 3
+                if(i+1==total && semStatus.s4 ==1)
+                {
+                  var j=0;
+                  dStatus4 = false;
+                  while(j<document.getElementsByClassName("planner_addBtn"+result).length)
+                  {
+                    document.getElementsByClassName("planner_addBtn"+result)[j].removeAttribute('disabled')
+                    j++;
+                  }
+                }
+                else if(i+1==total && semStatus.s4 !=1)
+                {
+                  var j=0;
+                  dStatus4 = true;
+                  while(j<document.getElementsByClassName("planner_addBtn"+result).length)
+                  {
+                    document.getElementsByClassName("planner_addBtn"+result)[j].disabled = true;
+                    j++;
+                  }
+                }
+            });
+
+            this.disabledStatus[0]=dStatus1
+            this.disabledStatus[1]=dStatus2
+            this.disabledStatus[2]=dStatus3
+            this.disabledStatus[3]=dStatus4
+            
+          }
+         
+        },
+
+        //Add selected modules from cp modbar to cell
+        addBtn:function(row,col){
+          row = row+1;
+          //Update timetable 
+          var key = "y"+col+"s"+row
+          for(var i =0;i<this.modbar_chklist.length;i++)
+          {
+            this.timetable[key].push(this.modbar_chklist[i])
+            //retrieve value of module code
+            var result = this.modbar_chklist[i] //module code - module name
+            var index = result.indexOf("-") //find index of  dash, "-"
+            var result = result.slice(0,index-1) //module code
+            //this.addModule(result.trim(),col,row); //added to vue data
+            var preclusionmsg=this.checkPre(result,col,row);
+            
+          }
+
+          //hide those modules added
+          for(var i=0;i<document.getElementsByClassName("cp_modbarChkBox").length;i++)
+          {
+            if(document.getElementsByClassName("cp_modbarChkBox")[i].checked==true)
+            {
+              document.getElementsByClassName("cp_modbarChkBox")[i].hidden = true
+              document.getElementsByClassName("cp_modbarLabel")[i].style.marginLeft = "20px";
+            }
+          }
+          
+          //write to firebase
+          this. updateFirebaseTimetable();
+
+          //Read from firebase, update to planner table
+          this.readFirebaseTimetable(row,col)
+
+          //Handle Update of progress bar, MCs, label and checkbox
+          this.updateCellMCs_Add(row,col);
+
+          //Update Progress Bar
+          this.updateProgressBar_Add();
+
+          //Disable all add button once add
+          for(var j=1;j<5;j++)
+          {
+            for(var k=0;k<document.getElementsByClassName("planner_addBtn"+j).length;k++)
+            {
+              document.getElementsByClassName("planner_addBtn"+j)[k].disabled = true;
+            }
+          }
+
+          this.disabledStatus = [true,true,true,true]
+          //empty list
+          this.modbar_chklist =[];
+
+          //Pre-requsiite
+          this.checkReq();
+
+        },
+        updateCellMCs_Add:function(row,col) //Update MCs in respective cell
+        {
+          var length = this.modbar_chklist.length
+          var key ="y"+col+"s"+row
+
+          for(var i=0;i<length;i++)
+          {
+            //retrieve value of module code
+            var result = this.modbar_chklist[i] //module code - module name
+            var index = result.indexOf("-") //find index of  dash, "-"
+            var result = result.slice(0,index-1) //module code
+
+            //Retrieve existing MCs
+            if(i == 0)
+            {
+              var totalMCs = this.mcsList[key]
+            }
+
+            //Update Total MCs
+            
+            var moduleRef = db.ref("modules/"+result);
+            moduleRef.on('value', function(snapshot) {
+              var mcs = snapshot.val()['Credits'];
+              totalMCs+=mcs
+            if(i+1==length)
+             {
+              document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML=""
+              document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML ="Total MCs:"+totalMCs
+              }
+            });
+          }
+          //Update MCs list
+          var result2 = document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML
+          var index = result2.indexOf(":")
+          var totalMCs = parseInt(result2.slice(index+1),10)
+          this.mcsList[key] = totalMCs;
+          this.updateFirebaseMCs();
+          
+        },
+
+        //Update Progress Bar
+        updateProgressBar_Add:function()
+        {
+          var core = this.progressbarCore;
+          var pe = this.progressbarPE;
+          var gem = this.progressbarGEM;
+          var ue = this.progressbarUE;
+
+          for(var i=0;i<this.modbar_chklist.length;i++)
+          {
+
+            var result = this.modbar_chklist[i] //module code - module name
+            var index = result.indexOf("-") //find index of  dash, "-"
+            var result = result.slice(0,index-1) //module code
+            studentRef.child('modules/'+result).on('value', function(snapshot) {
+                if (snapshot.val().type == 'core') {
+                  core += snapshot.val().mc;
+                } else if (snapshot.val().type == 'pe') {
+                  pe += snapshot.val().mc;;
+                } else if (snapshot.val().type == 'ge') {
+                  gem += snapshot.val().mc;
+                } else {
+                  ue += snapshot.val().mc;
+                }
+            });
+          }
+          var all = Math.min(84,core) + Math.min(pe,24) + Math.min(gem,20) + Math.min(ue,32)
+          //Core
+          document.getElementById("CorePercent").innerHTML = Math.round(core/84*100)+"%"
+          if(Math.round(core/84*100)>=100)
+          {
+            document.getElementById("Core").style.width = Math.round(84/84*100)+"px";
+            document.getElementById("Core").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("Core").style.width = Math.round(core/84*100)+"px"
+          
+          //PE
+          document.getElementById("PEPercent").innerHTML = Math.round(pe/24*100)+"%"
+          if(Math.round(pe/24*100)>=100)
+          {
+            document.getElementById("PE").style.width = Math.round(24/24*100)+"px";
+            document.getElementById("PE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("PE").style.width = Math.round(pe/24*100)+"px"
+          
+          //GE    
+          document.getElementById("GEPercent").innerHTML = Math.round(gem/20*100)+"%"
+          if(Math.round(gem/20*100)>=100)
+          {
+            document.getElementById("GE").style.width = Math.round(20/20*100)+"px"
+            document.getElementById("GE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("GE").style.width = Math.round(gem/20*100)+"px"
+          
+          //UE
+          document.getElementById("UEPercent").innerHTML = Math.round(ue/32*100)+"%"
+          if(Math.round(ue/32*100)>=100)
+          {
+            document.getElementById("UE").style.width = Math.round(32/32*100)+"px"
+            document.getElementById("UE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("UE").style.width = Math.round(ue/32*100)+"px"
+          
+          //All
+          document.getElementById("AllPercent").innerHTML = Math.round(all/160*100)+"%"
+          if(Math.round(all/160*100)>=100)
+          {
+            document.getElementById("All").style.width = Math.round(160/160*100)+"px";
+            document.getElementById("All").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("All").style.width = Math.round(all/160*100)+"px"
+          
+          this.progressbarCore = core
+          this.progressbarPE = pe
+          this.progressbarGEM = gem
+          this.progressbarUE = ue
+          this.progressbarAll = all
+
+        },
+        
+
+        //Remove those moddules added into the cell
+        removeBtn:function(row,col){
+          row +=1;
+          var chkbox = "chk_"+row + "_"+col
+          var key = "y"+col+"s"+row
+
+          //Disabled remove button
+          document.getElementsByClassName("planner_removeBtn"+row)[col-1].disabled = true
+
+          //Remove from timetable & Update visbility of sidebar checkbox
+          for(var i=0;i<document.getElementsByClassName(chkbox).length;i++)
+          {            
+            if(document.getElementsByClassName(chkbox)[i].checked == true)
+            {
+              var result = document.getElementsByClassName(chkbox)[i].getAttribute("value");
+              this.timetable[key].splice(this.timetable[key].indexOf(result),1)
+              var index = result.indexOf("-") //find index of  dash, "-
+              var result = result.slice(0,index-1) //module code
+              this.removeModule(result,col,row);//removes module from data
+
+              //Update the checkbox visibility at cp mod bar
+              for(var j=0;j<document.getElementsByClassName("cp_modbarChkBox").length;j++)
+              {
+                document.getElementsByClassName("cp_modbarChkBox")[j].disabled = false; //enable the checkbox at cp mod bar (cos it was disabled when modules is respective cell was checked)
+                //unhide those checkbox in cp modbar
+                if(document.getElementsByClassName("cp_modbarChkBox")[j].hidden==true)
+                {
+                  if(document.getElementsByClassName("cp_modbarChkBox")[j].getAttribute("value") == document.getElementsByClassName(chkbox)[i].getAttribute("value"))
+                  {
+                    document.getElementsByClassName("cp_modbarChkBox")[j].hidden = false
+                    document.getElementsByClassName("cp_modbarChkBox")[j].checked=false
+                    document.getElementsByClassName("cp_modbarLabel")[j].style.marginLeft="0px"
+                  }
+                }
+              }
+          }
+        }
+        this.allMods = [];
+          //Update total MCs
+          this.updateCellMCs_Remove(row,col)
+          //Update Progress Bar
+          this.updateProgressBar_Remove(row,col)
+          //Update to firebase
+          this.updateFirebaseTimetable(row,col);
+          //Update to planner Table
+          this.readFirebaseTimetable(row,col)
+          //Check prereq
+          this.checkReq();
+
+          console.log(this.allMods)
+        },
+
+        //Update Progress Bar
+        updateProgressBar_Remove:function(row,col)
+        {
+          var chkbox = "chk_"+row + "_"+col
+          //To update the progress bar
+          var core = this.progressbarCore;
+          var pe = this.progressbarPE;
+          var gem = this.progressbarGEM;
+          var ue = this.progressbarUE;
+
+          for(var i=0;i<document.getElementsByClassName(chkbox).length;i++)
+          {            
+            if(document.getElementsByClassName(chkbox)[i].checked == true)
+            {
+                var result = document.getElementsByClassName(chkbox)[i].getAttribute("value");
+                var index = result.indexOf("-") //find index of  dash, "-
+                var result = result.slice(0,index-1) //module code
+                //Update progress bar
+                studentRef.child('modules/'+result).on('value', function(snapshot) {
+                if (snapshot.val().type == 'core') {
+                  core -= snapshot.val().mc;
+                } else if (snapshot.val().type == 'pe') {
+                  pe -= snapshot.val().mc;;
+                } else if (snapshot.val().type == 'ge') {
+                  gem -= snapshot.val().mc;
+                } else {
+                  ue -= snapshot.val().mc;
+                }
+              });
+            }
+          }
+           //#########################Update Progress Bar########
+           var all = Math.min(84,core) + Math.min(pe,24) + Math.min(gem,20) + Math.min(ue,32)
+          //Core
+          document.getElementById("CorePercent").innerHTML = Math.round(core/84*100)+"%"
+          document.getElementById("Core").style.width = Math.round(core/84*100)+"px"
+          if(Math.round(core/84*100)>=100)
+          {
+            document.getElementById("Core").style.width = Math.round(84/84*100)+"px"
+            document.getElementById("Core").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+            document.getElementById("Core").style.width = Math.round(core/84*100)+"px"
+
+          //PE
+          document.getElementById("PEPercent").innerHTML = Math.round(pe/24*100)+"%"
+          if(Math.round(pe/24*100)>=100)
+          {
+            document.getElementById("PE").style.width = Math.round(24/24*100)+"px"
+            document.getElementById("PE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+            document.getElementById("PE").style.width = Math.round(pe/24*100)+"px"
+
+          //GEM
+          document.getElementById("GEPercent").innerHTML = Math.round(gem/20*100)+"%"
+          if(Math.round(gem/20*100)>=100)
+          {
+            document.getElementById("GE").style.width = Math.round(20/20*100)+"px"
+            document.getElementById("GE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+            document.getElementById("GE").style.width = Math.round(gem/20*100)+"px"
+
+          //UE
+          document.getElementById("UEPercent").innerHTML = Math.round(ue/32*100)+"%"
+          if(Math.round(ue/32*100)>=100)
+          {
+            document.getElementById("UE").style.width = Math.round(32/32*100)+"px"
+            document.getElementById("UE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+            document.getElementById("UE").style.width = Math.round(ue/32*100)+"px"
+
+          //All
+          document.getElementById("AllPercent").innerHTML = Math.round(all/160*100)+"%"
+          if(Math.round(all/160*100)>=100)
+          {
+            document.getElementById("All").style.borderRadius = "10px 10px 10px 10px";
+            document.getElementById("All").style.width = Math.round(160/160*100)+"px"
+          }
+          else
+            document.getElementById("All").style.width = Math.round(all/160*100)+"px"
+
+          this.progressbarCore = core;
+          this.progressbarPE = pe;
+          this.progressbarGEM = gem;
+          this.progressbarUE = ue;
+          this.progressbarAll = all;
+        },
+
+        updateCellMCs_Remove:function(row,col)
+        {
+          var chkbox = "chk_"+row + "_"+col
+          var count = 0;
+          var key ="y"+col+"s"+row
+
+          //Remove from timetable 
+          for(var i=0;i<document.getElementsByClassName(chkbox).length;i++)
+          {            
+            if(document.getElementsByClassName(chkbox)[i].checked == true)
+            { 
+              count+=1;
+              var result = document.getElementsByClassName(chkbox)[i].getAttribute("value");
+              var index = result.indexOf("-") //find index of  dash, "-
+              var result = result.slice(0,index-1) //module code
+              //Update total MCs
+              if(count==1)//first loop successful
+              {
+              var totalMCs = this.mcsList[key]
+              }
+              
+              var moduleRef = db.ref("modules/"+result);
+              moduleRef.on('value', function(snapshot) {
+              var mcs = snapshot.val()['Credits'];
+              totalMCs-=mcs;
+
+              document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML=""
+              document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML ="Total MCs:"+totalMCs
+              });
+            }
+          }
+          
+            //Update MCs
+            var result2 = document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML
+            var index = result2.indexOf(":")
+            var totalMCs = parseInt(result2.slice(index+1),10)
+            this.mcsList[key] = totalMCs;
+            this.updateFirebaseMCs();
+        },
+        //###################For Button Outside the Planner Table#######################
+        //Add Speical Term I Button (After click add, label change to remove and vice-versa)
+        specialTermI: function() {
+          if (document.getElementById("planner_specialTermIBtn").innerHTML =="Add Special Term I") 
+          {
+            this.row += 1;
+            if (this.semesterList.length == 2)
+            this.semesterList.push("Special Term I");
+            else this.semesterList.splice(2, 0, "Special Term I");
+            document.getElementById("planner_specialTermIBtn").innerHTML ="Remove Special Term I";
+
+          }
+          else {
+            //enable checkbox in modbar
+            for(var i=1;i<=this.num_year;i++)
+            {
+              var chkbox = "chk_"+3+ "_"+i
+              for(var k=0;k<document.getElementsByClassName(chkbox).length;k++)
+              {
+                for(var j=0;j<document.getElementsByClassName("cp_modbarChkBox").length;j++)
+                {
+                  if(document.getElementsByClassName("cp_modbarChkBox")[j].hidden==true)
+                  {
+                    if(document.getElementsByClassName("cp_modbarChkBox")[j].getAttribute("value") == document.getElementsByClassName(chkbox)[k].getAttribute("value"))
+                    {
+                      document.getElementsByClassName("cp_modbarChkBox")[j].hidden = false
+                      document.getElementsByClassName("cp_modbarChkBox")[j].checked=false
+                      document.getElementsByClassName("cp_modbarLabel")[j].style.marginLeft="0px"
+                    }
+                  }
+                }
+              }
+            }
+
+            var table = document.getElementById("planner_table");
+            this.row -= 1;
+            table.deleteRow(this.row);
+            var index = this.semesterList.indexOf("Special Term I")
+            this.semesterList.splice(index,1);
+            document.getElementById("planner_specialTermIBtn").innerHTML =
+            "Add Special Term I";
+            for (var i=0;i<this.semesters.length;i++){
+              this.semesters[i].special1=[];
+            }
+            this.checkReq();
+          }
+        },
+
+        //Add Special Term II Button (After click add, label change to remove and vice-versa)
+        specialTermII: function() {
+          if (document.getElementById("planner_specialTermIIBtn").innerHTML =="Add Special Term II") {
+            this.row += 1;
+            this.semesterList.push("Special Term II");
+            document.getElementById("planner_specialTermIIBtn").innerHTML ="Remove Special Term II";
+          }
+          else {
+            for(var i=1;i<=this.num_year;i++)
+            {
+              var chkbox = "chk_"+this.row+ "_"+i
+              for(var k=0;k<document.getElementsByClassName(chkbox).length;k++)
+              {
+                for(var j=0;j<document.getElementsByClassName("cp_modbarChkBox").length;j++)
+                {
+                  if(document.getElementsByClassName("cp_modbarChkBox")[j].hidden==true)
+                  {
+                    if(document.getElementsByClassName("cp_modbarChkBox")[j].getAttribute("value") == document.getElementsByClassName(chkbox)[k].getAttribute("value"))
+                    {
+                      document.getElementsByClassName("cp_modbarChkBox")[j].hidden = false
+                      document.getElementsByClassName("cp_modbarChkBox")[j].checked=false
+                      document.getElementsByClassName("cp_modbarLabel")[j].style.marginLeft="0px"
+                    }
+                  }
+                }
+              }
+            }
+
+            var table = document.getElementById("planner_table");
+            table.deleteRow(-1);
+            this.row -= 1;
+            var index = this.semesterList.indexOf("Special Term II")
+            this.semesterList.splice(index,1);
+            document.getElementById("planner_specialTermIIBtn").innerHTML ="Add Special Term II";
+            }
+            for (var i=0;i<this.semesters.length;i++){
+              this.semesters[i].special2=[];
+            }
+            this.checkReq();
+          },
+          //Add Year Column
+          //Add Year Column
+          addYear: function() {
+            var table = document.getElementById("planner_table");
+            this.num_year += 1;
+            studentRef.update({
+              numYear:this.num_year
+            });
+
+            //Maximum can add up to Year 6, this is as per NUS grad requirement
+            document.getElementById("planner_removeYear").disabled = false;
+            document.getElementById("planner_removeYear").style.opacity = 1;
+            document.getElementById("planner_removeYear").style.cursor = "default";
+            if (this.num_year >= 6) 
+            {
+              document.getElementById("planner_addYear").disabled = true;
+              document.getElementById("planner_addYear").style.opacity = 0.35;
+              document.getElementById("planner_addYear").style.cursor = "not-allowed";
+            }
+            var newYear = {
+              year: this.num_year,
+              semester1: [],
+              semester2: [],
+              special1: [],
+              special2: []};
+            this.semesters.push(newYear);
+           /* for(var i=1;i<this.row;i++)
+            {
+              console.log( document.getElementsByClassName("planner_addBtn"+i)[4])
+
+              if(!document.getElementsByClassName("planner_addBtn"+i)[0].hasOwnProperty("disabled"))
+              document.getElementsByClassName("planner_addBtn"+i)[this.num_year-1].removeAttribute("disabled");
+            }*/
+          },
+
+          //Remove Year Column
+          removeYear: function() {
+
+            var table1 = document.getElementById("planner_table");
+            for (var i = 0; i < this.row; i++) 
+            {
+              var chkbox = "chk_"+(i+1)+ "_"+this.num_year
+              for(var k=0;k<document.getElementsByClassName(chkbox).length;k++)
+              {
+                for(var j=0;j<document.getElementsByClassName("cp_modbarChkBox").length;j++)
+                {
+                  if(document.getElementsByClassName("cp_modbarChkBox")[j].hidden==true)
+                  {
+                    if(document.getElementsByClassName("cp_modbarChkBox")[j].getAttribute("value") == document.getElementsByClassName(chkbox)[k].getAttribute("value"))
+                    {
+                    document.getElementsByClassName("cp_modbarChkBox")[j].hidden = false
+                    document.getElementsByClassName("cp_modbarChkBox")[j].checked=false
+                    document.getElementsByClassName("cp_modbarLabel")[j].style.marginLeft="0px"
+                    }
+                  }
+                }
+              }
+
+              var row = table1.rows[i];
+              row.deleteCell(-1);
+            }
+
+
+            this.num_year -= 1;
+            studentRef.update({
+              numYear:this.num_year
+            });
+            document.getElementById("planner_addYear").disabled = false;
+            document.getElementById("planner_addYear").style.opacity = 1;
+            document.getElementById("planner_addYear").style.cursor = "default";
+            if (this.num_year <= 3) 
+            {
+              document.getElementById("planner_removeYear").disabled = true;
+              document.getElementById("planner_removeYear").style.opacity = 0.35;
+              document.getElementById("planner_removeYear").style.cursor ="not-allowed";
+            }
+            this.semesters.pop();
+            this.checkReq();
+          },
+          //delete all the modules populated
+          clearBtn:function()
+          {
+            this.allMods = [];
+            var table = document.getElementById("planner_table");
+            //Update timetable 
+            for(var r=1;r<this.row;r++)
+            {
+              for(var col=1;col<=this.num_year;col++)
+              {
+                var label = "label_"+r+ "_"+col
+                var chkbox = "chk_"+r+ "_"+col
+                var nCell = table.rows[r].cells[col]
+                document.getElementsByClassName("planner_removeBtn"+r)[col-1].disabled = true
+                this.timetable["y"+col+"s"+r].splice(0,this.timetable["y"+col+"s"+r].length)
+              }
+            }
+            //Update the checkbox
+            for(var i=0;i<document.getElementsByClassName("cp_modbarChkBox").length;i++)
+            {
+              document.getElementsByClassName("cp_modbarChkBox")[i].checked=false
+              //unhide those checkbox in cp modbar
+              if(document.getElementsByClassName("cp_modbarChkBox")[i].hidden==true)
+              {
+                  document.getElementsByClassName("cp_modbarChkBox")[i].hidden = false
+                  document.getElementsByClassName("cp_modbarLabel")[i].style.marginLeft="0px"
+              }
+            }
+            //Enable checkbox in cpmod bar in an event they are disabled
+            for(var j=0;j<document.getElementsByClassName("cp_modbarChkBox").length;j++)
+            {
+              document.getElementsByClassName("cp_modbarChkBox")[j].disabled = false;
+            }
+            //Update Firebase
+            this.updateFirebaseTimetable();
+            //Update to planner table
+            for(var r=1;r<this.row;r++)
+            {
+              for(var col=1;col<=this.num_year;col++)
+              {
+                this.readFirebaseTimetable(r,col)
+              }
+            }
+            //Update Progress Bar
+            this.updateProgressBar_Clear();
+            //Update respective cell MC
+            this.updateCellMCs_Clear();
+            //Pre-req
+            //clear from data
+            this.semesters=[];
+            for (var nyear=1;nyear<=this.num_year;nyear++){
+              var newYear = {
+                  year: nyear,
+                  semester1: [],
+                  semester2: [],
+                  special1: [],
+                  special2: []
+              };
+            this.semesters.push(newYear);}
+            //clears prereq msgs
+            let element = document.getElementById("pre-req");
+            while (element.firstChild) {
+              element.removeChild(element.firstChild);
+            }
+          },
+
+          updateProgressBar_Clear:function()
+          {
+            this.progressbarCore=0;
+            this.progressbarGEM=0;
+            this.progressbarPE=0;
+            this.progressUE=0;
+            this.progressAll = 0;
+
+            document.getElementById("CorePercent").innerHTML = Math.round(0/84*100)+"%"
+            document.getElementById("Core").style.width = Math.round(0/84*100)+"px"
+            document.getElementById("PEPercent").innerHTML = Math.round(0/24*100)+"%"
+            document.getElementById("PE").style.width = Math.round(0/24*100)+"px"
+            document.getElementById("GEPercent").innerHTML = Math.round(0/20*100)+"%"
+            document.getElementById("GE").style.width = Math.round(0/20*100)+"px"
+            document.getElementById("UEPercent").innerHTML = Math.round(0/32*100)+"%"
+            document.getElementById("UE").style.width = Math.round(0/32*100)+"px"
+            document.getElementById("AllPercent").innerHTML = Math.round(0/160*100)+"%"
+            document.getElementById("All").style.width = Math.round(0/160*100)+"px"
+
+          },
+          updateCellMCs_Clear:function()
+          {
+            for(var r=1;r<this.row;r++)
+            {
+              for(var col=1;col<=this.num_year;col++)
+              {
+                var key = "y"+col+"s"+r
+                document.getElementById("planner_mcLabel"+r+"_"+col).innerHTML="Total MCs:0"//set total MC to 0
+                this.mcsList[key] = 0;
+              }
+            }
+            this.updateFirebaseMCs();
+          },
+          updateFirebaseMCs:function()
+          {
+            studentRef.child("mcs").set({
+                          //Year 1
+             y1s1: this.mcsList["y1s1"],
+             y1s2: this.mcsList["y1s2"],
+             y1s3: this.mcsList["y1s3"],
+             y1s4: this.mcsList["y1s4"],
+
+            //Year 2
+             y2s1: this.mcsList["y2s1"],
+             y2s2: this.mcsList["y2s2"],
+             y2s3: this.mcsList["y2s3"],
+             y2s4: this.mcsList["y2s4"],
+
+            //Year 3
+             y3s1: this.mcsList["y3s1"],
+             y3s2: this.mcsList["y3s2"],
+             y3s3: this.mcsList["y3s3"],
+             y3s4: this.mcsList["y3s4"],
+
+            //Year 4
+             y4s1: this.mcsList["y4s1"],
+             y4s2: this.mcsList["y4s2"],
+             y4s3: this.mcsList["y4s3"],
+             y4s4: this.mcsList["y4s4"],
+
+            //Year 5
+             y5s1: this.mcsList["y5s1"],
+             y5s2: this.mcsList["y5s2"],
+             y5s3: this.mcsList["y5s3"],
+             y5s4: this.mcsList["y5s4"],
+
+            //Year 6
+             y6s1: this.mcsList["y6s1"],
+             y6s2: this.mcsList["y6s2"],
+             y6s3: this.mcsList["y6s3"],
+             y6s4: this.mcsList["y6s4"],
+            })
+          },
+
+
+          //Update add and remove to firebase
+         updateFirebaseTimetable:function()
+         {
+          studentRef.child("timetable").set({
+            //Year 1
+             y1s1: this.timetable["y1s1"],
+             y1s2: this.timetable["y1s2"],
+             y1s3: this.timetable["y1s3"],
+             y1s4: this.timetable["y1s4"],
+
+            //Year 2
+             y2s1: this.timetable["y2s1"],
+             y2s2: this.timetable["y2s2"],
+             y2s3: this.timetable["y2s3"],
+             y2s4: this.timetable["y2s4"],
+
+            //Year 3
+             y3s1: this.timetable["y3s1"],
+             y3s2: this.timetable["y3s2"],
+             y3s3: this.timetable["y3s3"],
+             y3s4: this.timetable["y3s4"],
+
+            //Year 4
+             y4s1: this.timetable["y4s1"],
+             y4s2: this.timetable["y4s2"],
+             y4s3: this.timetable["y4s3"],
+             y4s4: this.timetable["y4s4"],
+
+            //Year 5
+             y5s1: this.timetable["y5s1"],
+             y5s2: this.timetable["y5s2"],
+             y5s3: this.timetable["y5s3"],
+             y5s4: this.timetable["y5s4"],
+
+            //Year 6
+             y6s1: this.timetable["y6s1"],
+             y6s2: this.timetable["y6s2"],
+             y6s3: this.timetable["y6s3"],
+             y6s4: this.timetable["y6s4"],
+
+           }); 
+          },       
+          readFirebaseTimetable: async function(row,col)//Read firebase timetable
+          {
+            var table = document.getElementById("planner_table");
+            var key = "y"+col+"s"+row
+            var year = col
+            var sem = row
+            var nCell = table.rows[sem].cells[year]
+
+            var labelname = "label_"+sem+"_"+year
+            var chkboxname = "chk_"+sem+"_"+year
+            var brkname = "brk_"+sem+"_"+year
+
+            var i  =document.getElementsByClassName(labelname).length-1
+                while(i>-1)
+                {
+                  var child1 = document.getElementsByClassName(labelname)[i]
+                  var child2 = document.getElementsByClassName(chkboxname)[i]
+                  var child3 = document.getElementsByClassName(brkname)[i]
+
+                  nCell.removeChild(child1)
+                  nCell.removeChild(child2) 
+                  nCell.removeChild(child3)
+                  i--
+                }
+            if (sem==1){
+              this.semesters[year-1].semester1=[];
+            } else if(sem==2){
+              this.semesters[year-1].semester2=[];
+            } else if(sem==3){
+              this.semesters[year-1].special1=[];
+            }else {
+              this.semesters[year-1].special2=[];
+            }
+            var temp = this.allMods;
+            studentRef.child('timetable/'+key).on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                temp.push(childSnapshot.val())
+              
+                //Create label
+                var label = document.createElement("LABEL");
+                label.innerHTML = childSnapshot.val()
+                label.setAttribute("class",labelname)
+                label.setAttribute("title",childSnapshot.val())
+                label.style.fontSize = "12px";
+
+                //Create Checkbox and set attribute
+                var chkbox = document.createElement("INPUT");
+                chkbox.setAttribute("type", "checkbox");
+                chkbox.setAttribute("class",chkboxname)
+                chkbox.setAttribute("value",childSnapshot.val())
+            //Event handling if checkbox inside the respective cell are checked
+            chkbox.onclick=function(){
+            if(this.checked==true)
+            {
+              document.getElementsByClassName("planner_removeBtn"+row)[col-1].removeAttribute("disabled")
+              for(var j=0;j<document.getElementsByClassName("cp_modbarChkBox").length;j++)
+              {
+                document.getElementsByClassName("cp_modbarChkBox")[j].disabled = true;
+              }
+            }
+            else
+            {
+              document.getElementsByClassName("planner_removeBtn"+row)[col-1].disabled = true
+              for(var j=0;j<document.getElementsByClassName("cp_modbarChkBox").length;j++)
+              {
+                document.getElementsByClassName("cp_modbarChkBox")[j].disabled = false;
+              }
+            }
+            }
+
+                //Append to respective cell
+                nCell.appendChild(chkbox)
+                nCell.appendChild(label) 
+                var brk = document.createElement("br");
+                brk.setAttribute("class",brkname)
+                nCell.appendChild(brk) 
+                console.log(label);
+                var index = label.title.indexOf("-") //find index of  dash, "-"
+            var result = label.title.slice(0,index-1)
+            //console.log(result) //module code
+            this.plan.addModule(result,year,sem);
+            //console.log(this.plan.semesters);
+              });
+
+            });
+            this.allMods=temp;
+        },
+        default_retrieveTimetable:async function() //populate last saved timetable
+        {
+
+          var tempYear = this.num_year;
+          await studentRef.child("numYear").on('value', function(snapshot) {
+              tempYear = snapshot.val()
+              console.log(tempYear)
+          });
+          this.num_year = tempYear;
+          promises=[]
+          for(var r=1;r<this.row;r++) {
+            for(var col=1;col<=this.num_year;col++) { 
+              console.log(r,col)
+              let p=this.readFirebaseTimetable(r,col)
+              let m=this.retrieve_mcsFirebase(r,col)
+              promises.push(p);
+              promises.push(m);
+            }
+          }
+          var allp=Promise.all(promises);
+        console.log(allp);
+        console.log("chre");
+        allp.then(function(){
+          this.plan.checkReq()
+        })
+        setTimeout(function() {
+          console.log('the stack is now empty');
+          console.log(allp);
+          this.plan.checkReq();
+          //console.log(this.plan.semesters)
+        },1000);
+
+
+       },
+        default_updateTimetable:function() //Fetch from database and update timetable list
+        {
+         var tempTimetable= this.timetable
+          studentRef.child("timetable").on('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+              tempTimetable[childSnapshot.key] = childSnapshot.val()
+            });
+          });
+          this.timetable = tempTimetable;
+        },
+        default_updateCPBar:function() //Update CP Bar to hidden for those modules added for timetable retrieved
+        {
+          for(var h=0;h<this.allMods.length;h++)
+          {
+            for(var i=0;i<document.getElementsByClassName("cp_modbarChkBox").length;i++)
+            {
+              if(this.allMods[h]==document.getElementsByClassName("cp_modbarChkBox")[i].value)
+              {
+              document.getElementsByClassName("cp_modbarChkBox")[i].hidden = true
+              document.getElementsByClassName("cp_modbarLabel")[i].style.marginLeft = "20px";
+              }
+            }
+          }
+        },
+        default_progressBar:function() //Update progress bar for timetable retrieved
+        {
+          var core = 0;
+          var pe = 0;
+          var gem = 0;
+          var ue = 0;
+          for(var r=1;r<this.row;r++)
+          {
+            for(var col=1;col<=this.num_year;col++)
+            { 
+              for(var i =0;i<this.timetable["y"+col+"s"+r].length;i++)
+              {
+                var result = this.timetable["y"+col+"s"+r][i]
+                var index = result.indexOf("-") //find index of  dash, "-"
+                var result = result.slice(0,index-1) //module code
+                studentRef.child('modules/'+result).on('value', function(snapshot) {
+                if (snapshot.val().type == 'core') {
+                  core += snapshot.val().mc;
+                } else if (snapshot.val().type == 'pe') {
+                  pe += snapshot.val().mc;;
+                } else if (snapshot.val().type == 'ge') {
+                  gem += snapshot.val().mc;
+                } else {
+                  ue += snapshot.val().mc;
+                }
+              });
+
+              }
+
+            }
+          }
+          var all = core + pe + gem + ue
+          //Core
+          document.getElementById("CorePercent").innerHTML = Math.round(core/84*100)+"%"
+          if(Math.round(core/84*100)>=100)
+          {
+            document.getElementById("Core").style.width = Math.round(84/84*100)+"px";
+            document.getElementById("Core").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("Core").style.width = Math.round(core/84*100)+"px"
+          
+          //PE
+          document.getElementById("PEPercent").innerHTML = Math.round(pe/24*100)+"%"
+          if(Math.round(pe/24*100)>=100)
+          {
+            document.getElementById("PE").style.width = Math.round(24/24*100)+"px";
+            document.getElementById("PE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("PE").style.width = Math.round(pe/24*100)+"px"
+          
+          //GE    
+          document.getElementById("GEPercent").innerHTML = Math.round(gem/20*100)+"%"
+          if(Math.round(gem/20*100)>=100)
+          {
+            document.getElementById("GE").style.width = Math.round(20/20*100)+"px"
+            document.getElementById("GE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("GE").style.width = Math.round(gem/20*100)+"px"
+          
+          //UE
+          document.getElementById("UEPercent").innerHTML = Math.round(ue/32*100)+"%"
+          if(Math.round(ue/32*100)>=100)
+          {
+            document.getElementById("UE").style.width = Math.round(32/32*100)+"px"
+            document.getElementById("UE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("UE").style.width = Math.round(ue/32*100)+"px"
+          
+          //All
+          document.getElementById("AllPercent").innerHTML = Math.round(all/160*100)+"%"
+          if(Math.round(all/160*100)>=100)
+          {
+            document.getElementById("All").style.width = Math.round(160/160*100)+"px";
+            document.getElementById("All").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("All").style.width = Math.round(all/160*100)+"px"
+          
+          this.progressbarCore = core
+          this.progressbarPE = pe
+          this.progressbarGEM = gem
+          this.progressbarUE = ue
+          this.progressbarAll = all
+
+        },
+        retrieve_mcsFirebase:function(row,col)
+        {
+          var key = "y"+col+"s"+row
+          var temp = this.mcsList;
+          studentRef.child('mcs/'+key).on('value', function(snapshot) {
+                temp[key] = snapshot.val()
+                document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML=""
+                document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML ="Total MCs:"+temp[key]
+          });
+          this.mcsList = temp;
+        },
+
+        //from here: functionality to store modules for prereq and preclusion
+      addModule: function(module, currentYear, currentSem) {
+        var year = this.semesters[currentYear - 1];
+        if (currentSem === 1) {
+          year.semester1.push(module);
+        } else if (currentSem === 2) {
+          year.semester2.push(module);
+        } else if (currentSem === 3) {
+          year.special1.push(module);
+        } else if (currentSem === 4) {
+          year.special2.push(module);
+        }
+      },
+      removeModule: function(module, currentYear, currentSem) {
+        var year = this.semesters[currentYear - 1];
+        var index;
+        if (currentSem === 1) {
+          index = year.semester1.indexOf(module);
+          year.semester1.splice(index, 1);
+        } else if (currentSem === 2) {
+          index = year.semester2.indexOf(module);
+          year.semester2.splice(index, 1);
+        } else if (currentSem === 3) {
+          index = year.special1.indexOf(module);
+          year.special1.splice(index, 1);
+        } else if (currentSem === 4) {
+          index = year.special2.indexOf(module);
+          year.special2.splice(index, 1);
+        }
+      },
+      //checkReq: function(Addedmodule, currentYear, currentSem) {
+      checkReq: function(){
+        console.log("checkingreqs...")
+        console.log(this.semesters);
+        var prereqmsgs=[];
+          for (var year=1; year<=this.num_year;year++){
+            for (var semester=1; semester<=4;semester++){
+              var modulelist=[];
+              //retrieving modules for each sem
+              if (semester==1){
+                modulelist=this.semesters[year-1].semester1;
+              } else if (semester==2){
+                modulelist=this.semesters[year-1].semester2;
+              } else if (semester==3){
+                modulelist=this.semesters[year-1].special1;
+              } else {
+                modulelist=this.semesters[year-1].special2;
+              }
+              console.log(modulelist)
+              //retrieve modules for previous sems
+              var previoussems=this.allmodulelist(year,semester);
+              console.log("allmodlist: y"+year+" s"+semester);
+              console.log(previoussems);
+              for (var module=0;module<modulelist.length;module++){
+                var moduleRef = db.ref("modules/"+modulelist[module]+"/Prerequisite");
+                moduleRef.on('value', function(snapshot) {
+                  snapshot.forEach(function(childSnapshot) {
+                    var rawprereqlist = childSnapshot.val()
+                    var status = -1; //means never meet pre-req
+                    if(prereqlist!="NA") {
+                      var prereqlist = rawprereqlist.split("/");
+                      for(var prereq=0;prereq<prereqlist.length;prereq++){ //to handle pre-requisite with or e.g. MA1102R or MA1521
+                        if(previoussems.indexOf(prereqlist[prereq])!=-1){
+                          status = 1; //indicate pre-req met
+                          break;
+                        }
+                      }
+                      if (status==-1){
+                        prereqmsgs.push("Pre-requisite for "+modulelist[module]+" has not been fulfilled - "+rawprereqlist)
+                      }
+                    }
+                  })
+                })
+              }
+            }
+          }
+          //clears exisiting prereq msgs
+          let element = document.getElementById("pre-req");
+          while (element.firstChild) {
+            element.removeChild(element.firstChild);
+          }
+          //print msgs
+          console.log(prereqmsgs);
+          for (var msg =0; msg<prereqmsgs.length;msg++){
+            var lbl = document.createElement("label")
+            lbl.setAttribute("class","prereqWarning")
+            var brk = document.createElement("br")
+            //lbl.innerHTML = "Pre-requisite for "+allMods[i]+" has not been fulfilled - "+prereq
+            lbl.innerHTML= prereqmsgs[msg];
+            lbl.title= prereqmsgs[msg];
+            var div = document.getElementById("pre-req")
+            div.appendChild(lbl)
+            div.appendChild(brk)
+          }
+        //check requisites return list of requisites
+        //if newly added module does not fulfill
+        /*var notchecked = Addedmodule.retrieveRequisites();
+        if (notchecked.length === 0) {
+          return "";
+        }
+        var allmodules = this.allmodulelist(currentYear, currentSem);
+        for (var i = 0; i < allmodules.length; i++) {
+          var module = allmodules[i];
+          if (module in notchecked) {
+            notchecked.splice(i, 1);
+            if (notchecked.length === 0) {
+              return "";
+            }
+            break;
+          }
+        }
+        //check if similar modules to preclusions have been taken
+        for (var j = 0; j < notchecked.length; j++) {
+          module = notchecked[j];
+          var preclusions = module.retrievePreclusions();
+          for (var preclusion in preclusions) {
+            if (allmodules.indexOf(preclusion) !== -1) {
+              //preclusion found
+              notchecked.splice(j, 1);
+              if (notchecked.length === 0) {
+                return "";
+              }
+              break;
+            }
+          }
+        }
+        return notchecked; //supposed to return list of unfilled requisites
+      */
+      },
+      checkPre: function(Addedmodule, currentYear, currentSem) {
+        var allmodules = this.allmodulelist(currentYear, currentSem);
+        moduleListRef.child(Addedmodule).child('Preclusion').once('value').then(function(snapshot){
+          //console.log(snapshot.val());
+          var raw=snapshot.val();
+          //console.log(raw);
+          if (raw == "NA") {
+            document.getElementById("preClu").innerHTML="module has no preclusions"
+            return "module has no preclusions";
+          }
+          raw = raw.split(" or ");
+          //console.log(raw)
+          for (var i = 0; i < allmodules.length; i++) {
+            var module = allmodules[i];
+            if (raw.indexOf(module) !== -1) {
+              document.getElementById("preClu").innerHTML="you have already fulfilled a precluded module: "+module
+              return "you have already fulfilled a precluded module: "+module;
+            }
+          }
+          return "have not taken preclusions"
+        });
+        /*
+        var preclusions = retrievePreclusions(Addedmodule);
+        if (preclusions.length === 0) {
+          return "";
+        }
+        for (var i = 0; i < allmodules.length; i++) {
+          var module = allmodules[i];
+          if (preclusions.indexOf(module) !== -1) {
+            return "you have already fulfilled a precluded module";
+          }
+        }*/
+      },
+      allmodulelist: function(currentYear, currentSem) {
+        //creates a list of modules taken in descending order
+        //ignores modules taken in current year and future years
+        var list = [];
+        var curYear = this.semesters[currentYear - 1];
+        if (currentSem === 2) {
+          //console.log(curYear.semester1);
+          list=list.concat(curYear.semester1);
+        } else if (currentSem === 3) {
+          list=list.concat(curYear.semester2);
+          list=list.concat(curYear.semester1);
+        } else if (currentSem === 4) {
+          list = list.concat(curYear.special1);
+          list= list.concat(curYear.semester2);
+          list= list.concat(curYear.semester1);
+        }
+        console.log(list);
+        if (currentYear === 1) {
+          return list;
+        }
+        for (var i = currentYear - 2; i >= 0; i--) {
+          list=list.concat(this.semesters[i].special2);
+          list=list.concat(this.semesters[i].special1);
+          list=list.concat(this.semesters[i].semester2);
+          list=list.concat(this.semesters[i].semester1);
+        }
+        return list;
+      },
+      /*retrievePreclusions:function(Module){
+        //var Module='BT4211'
+        console.log("hello world");
+        var raw="hey";
+        moduleListRef.child(Module).child('Preclusion').once('value').then(function(snapshot){
+          //console.log(snapshot.val());
+          raw=snapshot.val();
+          //console.log(raw);
+          return raw;
+        });
+        //console.log(raw);
+        //console.log(moduleListRef.child(Module).child('Preclusion').once('value'));
+        //var db = firebase.initializeApp({ databaseURL: "https://nusplan-e00ab.firebaseio.com/" }).database();
+        //var raw = moduleListRef.child(Module).child('Preclusion').once('value',function)
+        //console.log(raw);
+        //console.log("hellow world");
+        //return raw;
+      }, */
+      prePopulate:function(){
+        //this.modbar_chklist=[];
+        //console.log(this.semesters);
+        var tempcore=this.coreMods;
+        this.clearBtn();
+        console.log(this);
+        studentRef.on("value", function(snapshot) {
+          var course = snapshot.val()["course"];
+          courseRef.on("value",function(snapshot){
+            var rawcourse = snapshot.val()[course]["Syllabus"];
+            for (var y =0;y<rawcourse.length;y++){//rawcourse.length
+              var year= rawcourse[y];
+              for (var s=0;s<year.length;s++){ //s is two //year.length
+                var semester= year[s];
+                for (var m=0;m<semester.length;m++){
+                  var module =semester[m]
+                  console.log(module);
+                  //console.log("can't");
+                  //console.log(this);
+                  //console.log(coreMods);
+                  var index = -1;
+                  for (var k=0;k<tempcore.length;k++){
+                    if (tempcore[k].key==module){
+                        index=k;
+                        break;
+                    }
+                  }
+                  console.log("index: "+index);
+                  console.log("corre mod:"+tempcore[index].key);
+                  //console.log("html:"+document.getElementsByClassName("cp_modbarChkBox")[index].title)
+                  //console.log(this.plan);
+                  document.getElementsByClassName("cp_modbarChkBox")[index].checked=true;
+                  //console.log(document.getElementsByClassName("cp_modbarChkBox")[index].checked);
+                  this.plan.modbar_chklist.push(tempcore[index].key+" - "+tempcore[index].name);
+                  }
+                console.log("s:"+s+"y:"+y);
+                this.plan.addBtn(s,y+1);
+                }
+             }
+           })
+         });
+        console.log("mission accomplished")
+      }
+      },
+      mounted() {
+        this.updateMods();
+        this.default_retrieveTimetable();
+        this.default_updateTimetable();
+        this.default_updateCPBar();
+      },
+      beforeUpdate() {
+        this.updateMods();
+      },
+      updated()
+      {
+        this.default_updateCPBar();
+        this.default_progressBar();
+      }
+
+      
+    });
+    
+    /* for logout button */
+    new Vue({
+      el: "#lo_logo",
+      methods: {
+        userLogout: function() {
+          sessionStorage.removeItem("username");
+          window.location.href = "./index.html";
+        },
+      }
+    });
+
+    /* for module add button */
+    var popupWindow = null;
+    function centeredPopup(url, winName){
+      winheight = (screen.height) ? (screen.height)/2 : 700;
+      winwidth = (screen.width) ? (screen.width)/2 : 700;
+      LeftPosition = (screen.width) ? (screen.width-winwidth)/2 : 0;
+      TopPosition = (screen.height) ? (screen.height-winheight)/2 : 0;
+      settings =
+      'location=no, height=' + winheight + ',width=' + winwidth + ',top='
+      + TopPosition + ',left=' + LeftPosition + ',scrollbars=no, titlebar=no'
+      popupWindow = window.open(url, winName, settings)
+    }
+  </script>
+</body>
+</html>
+

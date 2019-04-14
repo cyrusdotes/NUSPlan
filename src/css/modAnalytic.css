@@ -1,0 +1,398 @@
+/* do not touch the blocks until the next comment */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#cp_navbar {
+  background-color: black;
+}
+
+#welcome {
+  float: left;
+  height: 50px;
+  vertical-align: middle;
+  font-family: calibri light;
+  font-size: 15px;
+  color: white;
+  padding-left: 10px;
+}
+
+#logos {
+  text-align: right;
+  padding-right: 10px;
+  height: 50px;
+  vertical-align: middle;
+  padding-top: 4px;
+}
+
+#md_logo {
+  margin-bottom: 7px;
+  height: 30px;
+  width: 30px;
+  margin-top: 4px;
+}
+
+#pn_logo {
+  height: 22px;
+  width: 22px;
+  margin-bottom: 4px;
+  margin-left: 13px;
+}
+
+/*
+#st_logo {
+  height: 22px;
+  width: 22px;
+  margin-bottom: 12px;
+  margin-left: 14px;
+}
+*/
+
+#lo_logo {
+  height: 30px;
+  width: 30px;
+  margin-bottom: 3px;
+  margin-left: 10px;
+}
+
+#cp_sidebar {
+  width: 30%;
+  float: left;
+}
+
+#cp_addmod {
+  width: calc(50% - 1px);
+  height: 30px;
+  background-color: rgb(255, 217, 102);
+  border-right: 1px solid gray;
+  font-family: calibri light;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  float: left;
+}
+
+#cp_addmod:hover {
+  cursor: pointer;
+}
+
+#cp_rec {
+  width: 50%;
+  height: 30px;
+  background-color: rgb(255, 217, 102);
+  border: none;
+  font-family: calibri light;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  float: left;
+}
+
+#cp_rec:hover {
+  cursor: pointer;
+}
+
+#cp_modbar {
+  background-color: gray;
+  width: 100%;
+  height: calc(100vh - 79px);
+  font-family: calibri light;
+  font-size: 15px;
+  overflow-y: scroll;
+}
+
+#cp_modbar button {
+  cursor: pointer;
+}
+
+#cp_modbar button:disabled {
+  color: transparent;
+  cursor: default;
+}
+
+#cp_modbar ul {
+  width: 100%;
+  padding-left: 0px;
+}
+
+#cp_modbar li {
+  width: 100%;
+  list-style-type: none;
+  white-space: nowrap;
+  background-color: lightgray;
+}
+
+#core_mods_header {
+  display: none;
+}
+
+#core_mods_header:checked + label > div {
+  display: none;
+}
+
+#core_mods_header_lbl {
+  width: 100%;
+}
+
+#core_mods_header_lbl:hover {
+  cursor: pointer;
+}
+
+#prog_ele_header {
+  display: none;
+}
+
+#prog_ele_header:checked + label > div {
+  display: none;
+}
+
+#prog_ele_header_lbl {
+  width: 100%;
+}
+
+#prog_ele_header_lbl:hover {
+  cursor: pointer;
+}
+
+#gene_mod_header {
+  display: none;
+}
+
+#gene_mod_header:checked + label > div {
+  display: none;
+}
+
+#gene_mod_header_lbl {
+  width: 100%;
+}
+
+#gene_mod_header_lbl:hover {
+  cursor: pointer;
+}
+
+#unre_ele_header {
+  display: none;
+}
+
+#unre_ele_header:checked + label > div {
+  display: none;
+}
+
+#unre_ele_header_lbl {
+  width: 100%;
+}
+
+#unre_ele_header_lbl:hover {
+  cursor: pointer;
+}
+/* insert your styles below */
+
+#analytics {
+  width: 70%;
+  float: right;
+  box-sizing: border-box;
+  padding: 10px;
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  overflow: scroll;
+  height: calc(100vh - 49px);
+}
+
+h1 {
+  margin: 0px;
+  padding: 0px;
+}
+
+h2,
+h4,
+h6 {
+  padding: 0px;
+  margin: 0px;
+}
+
+#modinfo {
+  width: 100%;
+  font-size: 24px;
+  padding: 10px;
+  border-bottom: 2px solid silver;
+}
+#modDesc {
+  padding: 10px;
+  border-bottom: 2px solid silver;
+  margin: 5px;
+  text-align: justify;
+}
+
+#ModDesHead {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px;
+}
+
+#ModDestext {
+  font-size: 15px;
+  font-weight: normal;
+  margin: 5px;
+}
+
+#selectSemHead {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px;
+}
+
+#selectSem {
+  padding: 10px;
+  border-bottom: 2px solid silver;
+  margin: 5px;
+}
+
+#myProgress {
+  width: 100%;
+  background-color: #ddd;
+  margin-bottom: 20px;
+}
+
+#modRev {
+  margin: 5px;
+  padding: 10px;
+  border-bottom: 2px solid silver;
+}
+
+#modRevHead {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px;
+}
+
+#avgRateHead {
+  margin: 5px;
+  font-size: 16px;
+}
+
+.bar {
+  width: 100%;
+  background: #dfdfdf;
+  overflow: hidden;
+  padding: 5px;
+}
+
+.progress {
+  float: left;
+  padding: 5px;
+  color: white;
+  text-align: center;
+}
+
+#profRat {
+  padding: 2%;
+  width: 50%;
+  float: left;
+  box-sizing: border-box;
+  height: 35%;
+  margin-top: 5px;
+}
+
+span#procent {
+  display: block;
+  position: absolute;
+  left: 105%;
+  top: 75%;
+  font-size: 30px;
+  transform: translate(-50%, -50%);
+  color: #3949ab;
+}
+
+span#procent::after {
+  content: "%";
+}
+
+.canvas-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  float: left;
+}
+
+#RecomHead {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#profBreakdown {
+  height: 100%;
+  width: 50%;
+  float: right;
+  font-weight: normal;
+}
+
+#profName {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+#profElements {
+  font-size: 15px;
+  margin-right: 10px;
+}
+
+#diff {
+  font-size: 20px;
+  padding: 2%;
+  width: 50%;
+  float: right;
+  height: 35%;
+  margin-top: 5px;
+  box-sizing: border-box;
+  display: blocks;
+  border-left: 2px solid silver;
+}
+
+#DiffBar {
+  text-align: center;
+  margin-top: 50px;
+}
+
+#workloadTag {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.clear {
+  clear: both;
+}
+
+#grades {
+  padding: 10px;
+  margin-top: 0px;
+  text-align: center;
+}
+
+#gradesHead {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.chart {
+  position: relative;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 20px;
+}
+.box canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#myChart {
+  width: 100%;
+  margin: 5px;
+}

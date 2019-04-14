@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TEST</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./src/css/moduleadd.css" />
+    <link rel="stylesheet" href="./src/css/styles.css" />
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="header">Add Module</div>
+
+      <div id="main">
+        <div>
+          <input
+            id="tb_modcode"
+            type="text"
+            :placeholder="modPH"
+            v-model="searchmod"
+            @input="disableName()"
+            :disabled="modDisabled"
+          />
+        </div>
+
+        <div>
+          <input
+            id="tb_modname"
+            type="text"
+            :placeholder="namePH"
+            v-model="searchname"
+            @input="disableMod()"
+            :disabled="nameDisabled"
+          />
+        </div>
+
+        <div id="table_container">
+          <table id="mod_table">
+            <tr>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Link</th>
+              <th>Type</th>
+              <th></th>
+            </tr>
+            <tr v-for="mod in filteredList">
+              <td>{{ mod.key }}</td>
+              <td>{{ mod.Name }}</td>
+              <td>
+                <a
+                  :href="'https://ivle.nus.edu.sg/lms/public/list_course_public.aspx?code=' + mod.key"
+                  target="_blank"
+                >
+                  Info
+                </a>
+              </td>
+              <td>
+                <select :id="'typeddl' + mod.key">
+                  <option value="0" selected="selected">-</option>
+                  <option value="pe">PE</option>
+                  <option value="ge">GE</option>
+                  <option value="ue">UE</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  v-if="checkMod(mod.key)"
+                  id="btn_addmod"
+                  type="submit"
+                  value="Add"
+                  @click="addMod(mod)"
+                />
+                <input
+                  v-else
+                  id="btn_addmod"
+                  type="submit"
+                  value="Added"
+                  disabled="true"
+                />
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+    <script>
+      var db = firebase
+        .initializeApp({ databaseURL: "https://nusplan-e00ab.firebaseio.com/" })
+        .database();
+      var username = sessionStorage.getItem("username");
+      var studentRef = db.ref("student/" + username);
+      var moduleRef = db.ref("modules");
+      var fulldata = [];
+      var preuserdata = [];
+
+      /* for module table */
+      moduleRef.on("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var item = childSnapshot.val();
+          item.key = childSnapshot.key;
+          fulldata.push(item);
+        });
+      });
+
+      /* for user check */
+      studentRef
+        .child("modules")
+        .orderByChild("level")
+        .on("value", function(snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            childSnapshot.key;
+            preuserdata.push(childSnapshot.key);
+          });
+        });
+
+      /* for modules table */
+      new Vue({
+        el: "#main",
+        data: {
+          searchmod: "",
+          searchname: "",
+          modDisabled: false,
+          nameDisabled: false,
+          modPH: "Search Module Code",
+          namePH: "Search Module Name",
+          tabledata: fulldata,
+          userdata: preuserdata,
+          modcode: "",
+          added: "Add"
+        },
+        firebase: {
+          student: studentRef.child("modules")
+        },
+        methods: {
+          addMod: function(mod) {
+            var e = document.getElementById("typeddl" + mod.key);
+            var modcat = e.options[e.selectedIndex].value;
+            if (modcat == 0) {
+              alert("Please select module category.");
+            } else {
+              var credit = mod.Credits;
+              var level = mod.key.match(/\d/)[0];
+              var name = mod.Name;
+              var item = {
+                exam: "-",
+                grade: "-",
+                status: "pending"
+              };
+              item["mc"] = credit;
+              item["name"] = name;
+              item["level"] = level;
+              item["type"] = modcat;
+              console.log(item);
+              studentRef
+                .child("modules")
+                .child(mod.key)
+                .push(mod);
+              studentRef
+                .child("modules")
+                .child(mod.key)
+                .set(item);
+            }
+            e.selectedIndex = 0;
+          },
+          checkMod: function(modkey) {
+            if (this.userdata.indexOf(modkey) > -1) {
+              return false;
+            } else {
+              return true;
+            }
+          },
+          disableName: function() {
+            if (this.searchmod != "") {
+              this.nameDisabled = true;
+              this.namePH = "-";
+            } else {
+              this.nameDisabled = false;
+              this.namePH = "Search Module Name";
+            }
+          },
+          disableMod: function() {
+            if (this.searchname != "") {
+              this.modDisabled = true;
+              this.modPH = "-";
+            } else {
+              this.modDisabled = false;
+              this.modPH = "Search Module Name";
+            }
+          }
+        },
+        computed: {
+          filteredList() {
+            return this.tabledata.filter(mod => {
+              if (this.searchmod != "")
+                return mod.key
+                  .toLowerCase()
+                  .includes(this.searchmod.toLowerCase());
+              else
+                return mod.Name.toLowerCase().includes(
+                  this.searchname.toLowerCase()
+                );
+            });
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

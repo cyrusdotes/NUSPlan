@@ -1,0 +1,341 @@
+/* do not touch the blocks until the next comment */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#cp_navbar {
+  background-color: black;
+}
+
+#welcome {
+  float: left;
+  height: 45px;
+  vertical-align: middle;
+  font-family: calibri light;
+  font-size: 15px;
+  color: white;
+  padding-left: 10px;
+}
+
+#logos {
+  text-align: right;
+  padding-right: 10px;
+  height: 45px;
+  vertical-align: middle;
+  padding-top: 4px;
+}
+
+#md_logo {
+  margin-bottom: 7px;
+  height: 30px;
+  width: 30px;
+  margin-top: 4px;
+}
+
+#pn_logo {
+  height: 22px;
+  width: 22px;
+  margin-bottom: 12px;
+  margin-left: 13px;
+}
+
+/*
+#st_logo {
+  height: 22px;
+  width: 22px;
+  margin-bottom: 12px;
+  margin-left: 14px;
+}
+*/
+
+#lo_logo {
+  height: 30px;
+  width: 30px;
+  margin-bottom: 8px;
+  margin-left: 10px;
+}
+
+#cp_sidebar {
+  width: 30%;
+  float: left;
+}
+
+#cp_addmod {
+  width: calc(50% - 1px);
+  height: 30px;
+  background-color: rgb(255, 217, 102);
+  border-right: 1px solid gray;
+  font-family: calibri light;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  float: left;
+}
+
+#cp_addmod:hover {
+  cursor: pointer;
+}
+
+#cp_rec {
+  width: 50%;
+  height: 30px;
+  background-color: rgb(255, 217, 102);
+  border: none;
+  font-family: calibri light;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  float: left;
+}
+
+#cp_rec:hover {
+  cursor: pointer;
+}
+
+#cp_modbar {
+  background-color: gray;
+  width: 100%;
+  height: calc(100vh - 79px);
+  font-family: calibri light;
+  font-size: 15px;
+  overflow-y: scroll;
+}
+
+#cp_modbar button {
+  cursor: pointer;
+}
+
+#cp_modbar button:disabled {
+  color: transparent;
+  cursor: default;
+}
+
+#cp_modbar ul {
+  width: 100%;
+  padding-left: 0px;
+}
+
+#cp_modbar li {
+  width: 100%;
+  list-style-type: none;
+  white-space: nowrap;
+  background-color: lightgray;
+}
+
+#core_mods_header {
+  display: none;
+}
+
+#core_mods_header:checked + label > div {
+  display: none;
+}
+
+#core_mods_header_lbl {
+  width: 100%;
+}
+
+#core_mods_header_lbl:hover {
+  cursor: pointer;
+}
+
+#prog_ele_header {
+  display: none;
+}
+
+#prog_ele_header:checked + label > div {
+  display: none;
+}
+
+#prog_ele_header_lbl {
+  width: 100%;
+}
+
+#prog_ele_header_lbl:hover {
+  cursor: pointer;
+}
+
+#gene_mod_header {
+  display: none;
+}
+
+#gene_mod_header:checked + label > div {
+  display: none;
+}
+
+#gene_mod_header_lbl {
+  width: 100%;
+}
+
+#gene_mod_header_lbl:hover {
+  cursor: pointer;
+}
+
+#unre_ele_header {
+  display: none;
+}
+
+#unre_ele_header:checked + label > div {
+  display: none;
+}
+
+#unre_ele_header_lbl {
+  width: 100%;
+}
+
+#unre_ele_header_lbl:hover {
+  cursor: pointer;
+}
+/* insert your styles below */
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+#moduleDisplay {
+  width: 50%;
+  height: 95vh;
+  overflow: scroll;
+  float: left;
+}
+
+#moduleList {
+  list-style-type: none;
+}
+
+#SearchBar {
+  margin-left: 10%;
+  width: 75%;
+  height: 35px;
+  box-align: centre;
+}
+
+#moduleHeader {
+  text-align: center;
+}
+
+#oneMod {
+  width: 90%;
+  margin-bottom: 3%;
+  box-align: centre;
+  background-color: #fef9c7;
+}
+
+#nameRow {
+  padding: 2px;
+  text-align: center;
+  background-color: #fce181;
+}
+
+#desRow {
+  margin-left: 20px;
+}
+
+#FacultyLab {
+  text-transform: uppercase;
+  margin-bottom: 0px;
+}
+
+#AvailCredits {
+  margin-top: 10px;
+}
+
+#Ratings {
+  text-align: right;
+  margin-right: 30px;
+  color: #026670;
+}
+
+#refineBar {
+  text-align: center;
+  width: 20%;
+  height: 95vh;
+  box-align: left;
+  background-color: papayawhip;
+  overflow: scroll;
+  float: right;
+}
+
+#prereq {
+  text-align: justify;
+  margin-right: 20px;
+}
+
+#preclu {
+  text-align: justify;
+  margin-right: 20px;
+}
+
+#Popularity {
+  background-color: #edeae5;
+  color: black;
+  font-size: 16px;
+  margin: 15px;
+  display: inline-block;
+  cursor: pointer;
+  padding: 10px 20px;
+  border: 0px;
+}
+
+#Availability {
+  text-align: left;
+  margin-left: 20px;
+}
+
+#Level {
+  text-align: left;
+  margin-left: 20px;
+}
+
+#Credits {
+  text-align: left;
+  margin-left: 20px;
+}
+
+#Examinable {
+  text-align: left;
+  margin-left: 20px;
+}
+.dropbtn {
+  background-color: #edeae5;
+  color: black;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: rgba(255, 62, 62, 0.692);
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TEST</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./src/css/login.css">
+    <link rel="stylesheet" href="./src/css/styles.css">
+	</head>
+
+  <body>
+    <div id="cp_login_container">
+      <div id="cp_login">
+        <img id="login_img" src="./src/assets/profile_logo.png" />
+        <br>
+        <br>
+        <input id="tb_username" v-model="username" placeholder="username"></input>
+        <br>
+        <div id="username_sts">{{ username_sts }}</div>
+        <br>
+        <br>
+        <input id="tb_password" v-model="password" placeholder="password"></input>
+        <br>
+        <div id="password_sts">{{ password_sts }}</div>
+        <br>
+        <br>
+        <button id="btn_login" @click="userLogin()">Login</button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+		<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+    <script>
+      var db = firebase.initializeApp({ databaseURL: "https://nusplan-e00ab.firebaseio.com/" }).database();
+      var studentRef = db.ref("student");
+
+      new Vue({
+        el: "#cp_login",
+        data: {
+          username: "",
+          password: "",
+          password_sts: "",
+          username_sts: "",
+        },
+        firebase: {
+          student: studentRef,
+        },
+        methods: {
+          userLogin: function() {
+            for (std of this.student) {
+              if (this.username == std['.key']) {
+                if (this.password == std['password']) {
+                  // Check browser support
+                  if (typeof(Storage) !== "undefined") {
+                    // Store
+                    sessionStorage.setItem("username", this.username);
+                    this.password_sts = "";
+                    this.username_sts = "";
+                    window.location.href = "./planner.html";
+                    return;
+                  } 
+                  else {
+                    this.password_sts = "Sorry, your browser does not support Web Storage...";
+                    this.username_sts = "";
+                    return;
+                  }
+                }
+                else { 
+                  this.password_sts = "wrong password!"
+                  this.username_sts = "";
+                  return;
+                }
+              }
+            }
+            this.username_sts = "username does not exist!";
+            this.password_sts = "";
+          },
+        }
+      });
+      
+      document.getElementById("tb_username").addEventListener("keyup", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+          // Cancel the default action, if needed
+          event.preventDefault();
+          // Trigger the button element with a click
+          document.getElementById("btn_login").click();
+        }
+      });
+
+      document.getElementById("tb_password").addEventListener("keyup", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+          // Cancel the default action, if needed
+          event.preventDefault();
+          // Trigger the button element with a click
+          document.getElementById("btn_login").click();
+        }
+      }); 
+    </script>
+  </body>
+</html>

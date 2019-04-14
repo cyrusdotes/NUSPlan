@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="./src/css/modAnalytic.css">
+  <link rel="stylesheet" href="./src/css/styles.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <script src =  https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js> </script>
+
+</head>
+
+<body>
+  <!-- do not touch cp_navbar -->
+	<div id="cp_navbar">
+    <a href="./planner.html">
+      <div id="welcome">
+        <p id="nav_user"></p>
+      </div>
+    </a>
+
+    <div id="logos">
+        <a href="./modules.html"><img id="md_logo" src="src/assets/modules_logo.png" alt="modules"/></a>
+        <a href="./planner.html"><img id="pn_logo" src="src/assets/planner_logo.png" alt="planner"/></a>
+        <img @click="userLogout()" id="lo_logo" src="src/assets/logout_logo.png" alt="settings" style="cursor: pointer;">
+    </div>
+  </div>
+
+  <!-- do not touch cp_sidebar -->
+  <div id="cp_sidebar">
+    <!-- do not touch cp_modbar -->
+    <div id="cp_modbar">
+
+      <ul style="margin-top: auto;">
+  
+        <li> 
+          <input type="checkbox" id="core_mods_header"/>
+          <label id="core_mods_header_lbl" for="core_mods_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Core Module</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">48/80  &#8801;</span>
+            </div>
+  
+            <div>
+              <ul>
+                <li v-for="module in coreMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-left: auto; margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="prog_ele_header"/>
+          <label id="prog_ele_header_lbl" for="prog_ele_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Program Electives</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">0/24  &#8801;</span>
+            </div>
+  
+            <div>
+              <ul>
+                <li v-for="module in peMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 100%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="gene_mod_header"/>
+          <label id="gene_mod_header_lbl" for="gene_mod_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">General Modules</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">8/20  &#8801;</span>
+            </div>
+            
+            <div>
+              <ul>
+                <li v-for="module in geMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: lightskyblue; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+  
+        <li>
+          <input type="checkbox" id="unre_ele_header"/>
+          <label id="unre_ele_header_lbl" for="unre_ele_header">
+            <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
+              <span style="margin-left: 10px; color: white;">Unrestricted Electives</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">30/32  &#8801;</span>
+            </div>
+            
+            <div>
+              <ul>
+                <li v-for="module in ueMods" 
+                    style="height: 20px; padding-right: 10px; 
+                            border-bottom: 1px solid darkgray; display: flex; width: 90%; 
+                            align-items: center; margin: 0 auto; ">
+                  <input :title="module.name" 
+                        disabled="true" :value="module.key + ' - ' + module.name"
+                        style="vertical-align: middle; text-overflow: ellipsis; 
+                                overflow: hidden; width: 90%; border: none; 
+                                background-color: transparent; font-size: 13px;
+                                font-family: calibri light">
+                  </input>
+                  <button style="border: none; background-color: transparent; 
+                                  margin-left: auto; margin-right: 0"
+                          :disabled=checkMod(module.status) @click="deleteMod(module)">
+                    &#128465;
+                  </button>
+                  <input v-if="module.status === 'taken'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'ongoing'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: limegreen; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'exempted'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: orange; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'pending'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                  <input v-else-if="module.status === 'unfulfilled'" 
+                        value="&#8226;" disabled="true" :title="module.grade"
+                        style="margin-right: 0; width: 15px; 
+                                text-align: center; color: yellow; border: none;
+                                background-color: transparent; font-size: 30px;">
+                  </input>
+                </li>
+              </ul>
+            </div>
+          </label>
+        </li>
+
+      </ul>
+
+    </div>
+
+    <div id="cp_addmod">
+      <a href="./moduleadd.html" style="color: gray; text-decoration: none; text-align: center; width: 100%;"
+         onclick="centeredPopup(this.href, 'Add Modules');return false">Add Modules</a>
+    </div>
+    <div id="cp_rec" @click="modRec()">
+      <span style="color: gray; text-decoration: none; text-align: center; width: 100%;">
+        Recommend
+      </span>
+    </div>
+  </div>
+
+  <div id = "analytics">
+    
+    <div id ="modinfo">
+          <h1><font size="25"><strong>{{ allData['key'] }} </strong></font></h1>
+          <h2><b>{{ allData['Name'] }}  </b></font> </h2>
+          <h6 style = "font-family: 15px"><b> Credits: {{ allData['Credits'] + " MCs" }} </b></h6>
+          <h6 style = "font-family: 15px"><b> Avaliable: {{ checkSem1(allData['Sem1'])  + 
+            checkSem2(allData['Sem2']) + checkSTI(allData['STI']) 
+            + checkSTII(allData['STII']) }} </b></h6>
+          <h6 style = "font-family: 15px"><b> {{  generatePrereq(allData['Display_preReq']) }} </b></h6>
+          <h6 style = "font-family: 15px"><b> {{ generatePreclu(allData['Preclusion']) }} </b></h6>
+    </div>
+
+    <div id="modDesc">
+        <p id="ModDesHead"> Module Description </p>
+        <p id="ModDestext"> {{ allData['Descriptions'] }}</p>
+    </div>
+    <div id = "selectSem">
+      <strong id="selectSemHead">Select Semester: </strong>
+      <select @change="refreshAY(curSem);" v-model="curSem">
+        <option selected disabled>Select a semester</option>
+        <option v-for="sem in AYList" :key="sem">
+          {{ sem }}
+        </option>
+      </select>
+      <br/>
+    </div>
+    <!-- make the modRev and Prof Rat and Distribution in one div (for v-model) -->
+    <div id = "modRev">
+      <strong id="modRevHead"> Module Reviews </strong>
+      <br>
+      <div id="avgRateHead" align="center" > Average Module Rating</div>
+        <div class="bar">
+
+        <div class="progress" v-if="curSem === '2017-S1'" 
+        v-bind:style="{'background':'green',
+        'width':avgRating1/5*100+'%'}">{{ avgRating1 + "/5" }}</div>
+
+        <div class="progress" v-if="curSem != '2017-S1'"
+        v-bind:style="{'background':'green',
+        'width':avgRating2/5*100+'%'}">{{ avgRating2 + "/5" }}</div>
+
+        </div>
+    </div>
+
+    <div id = "profRat">  
+      <div id="RecomHead" v-if="curSem === '2017-S1'">Recommend Prof: {{ Recommend1 + "%" }}</div>
+      <div id="RecomHead" v-if="curSem != '2017-S1'">Recommend Prof: {{ Recommend2 + "%" }}</div>
+      <div class="canvas-wrap">
+      <canvas id="canvas" width="300" height="300"></canvas>
+      <span id="procent"></span>
+      </div>
+
+      <div id = profBreakdown>
+        <br/> 
+        <div id="profName"> Lecturer: {{ Prof }} </div>
+        <table id="profElements">
+            <tr>
+              <td> Enhance Thinking</td> 
+              <td v-if="curSem === '2017-S1'"> {{ Thinking1 }}/5</td>
+              <td v-if="curSem != '2017-S1'"> {{ Thinking2 }}/5</td>
+            </tr>
+            
+            <tr>
+              <td> Provide Feedback </td>
+              <td v-if="curSem === '2017-S1'"> {{ Feedback1 }}/5 </td>
+              <td v-if="curSem != '2017-S1'"> {{ Feedback2 }}/5 </td>
+            </tr>
+
+            <tr>
+            <td> Forster Interest </td>
+            <td v-if="curSem === '2017-S1'"> {{ Interest1 }}/5</td>
+            <td v-if="curSem != '2017-S1'"> {{ Interest2 }}/5</td>
+            </tr>
+
+          </table>
+      </div>
+    </div>
+    
+          
+    <div id = "diff"> 
+      Module Difficulty
+      
+      <div class="w3-light-grey w3-round-xlarge" id="DiffBar">
+        <div class="w3-container w3-red w3-round-xlarge" v-if="curSem === '2017-S1'"
+        v-bind:style="{'width':modDiff1/5*100+'%'}">{{ modDiff1 + "/5" }}
+        </div>
+        <div class="w3-container w3-red w3-round-xlarge" v-if="curSem != '2017-S1'"
+        v-bind:style="{'width':modDiff2/5*100+'%'}">{{ modDiff2 + "/5" }}
+        </div>
+      </div>
+      <p id="workloadTag">
+        Workload: {{ allData['Workload']}}
+      </p>  
+    </div>
+
+
+    
+    
+    <div class ="clear"></div>
+
+    <div id = "grades">
+      <br/>
+      <br/>
+      <strong id="gradesHead"> Grade Distribution </strong>
+      <div id="ChartContainer">
+      <canvas id='myChart' height="400"> </canvas>
+      </div>
+   
+    </div> 
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+	<script src="https://unpkg.com/querybase@0.6.0"></script>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+	<script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+  
+ 
+  <script>
+
+    var db = firebase.initializeApp({ databaseURL: "https://nusplan-e00ab.firebaseio.com/" }).database();
+    
+    var username = sessionStorage.getItem("username");
+    var studentRef = db.ref("student/" + username);
+
+    /* for name display */
+    studentRef.on("value", function(snapshot) {
+      var fullname = snapshot.val()["name"];
+      document.getElementById("nav_user").innerHTML = "Welcome, " + fullname;
+    });
+
+    /* for modules bar */
+    new Vue({
+      el: "#cp_sidebar",
+      data: {
+        sid: username,
+        coreMods: [],
+        peMods: [],
+        geMods: [],
+        ueMods: [],
+        coreMC: '-',
+        peMC: '-',
+        geMC: '-',
+        ueMC: '-'
+      },
+      firebase: {
+        student: studentRef
+      },
+      methods: {
+        modRec: function() {
+          if (confirm('Proceed with our recommended General Modules and Program Electives?')) {
+            var pe = [];
+            var ge = [];
+            studentRef.child('recPE').child('A').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recPE').child('B').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recPE').child('C').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recGE').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                ge.push(childSnapshot.val())
+              });
+            });
+            
+            this.peMods.forEach(function(element) {
+              pe = pe.filter(function(value, index, arr){
+                  return value != element.key;
+              });
+            });
+            this.geMods.forEach(function(element) {
+              ge = ge.filter(function(value, index, arr){
+                  return value.substring(0,3) != element.key.substring(0,3);
+              });
+            });
+
+            pe.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'pe';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
+              });
+            });
+            ge.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'ge';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
+              });
+            });
+          }
+        },         
+        deleteMod: function(mod) {
+          if (
+            confirm(
+              "Are you sure you want to delete " + mod.key + ",\n" + mod.name + "?"
+            )
+          ) {
+            studentRef
+              .child("modules")
+              .child(mod.key)
+              .set(null);
+          }
+        },
+        checkMod: function(status) {
+          if (status == "pending" || status == "unfulfilled") {
+            return false;
+          } else {
+            return true;
+          }
+        },
+        updateMods: function() {
+            this.coreMods = [];
+            this.peMods = [];
+            this.geMods = [];
+            this.ueMods = [];
+            var coreTemp = [];
+            var peTemp = [];
+            var geTemp = [];
+            var ueTemp = [];
+            var coreMC = 0;
+            var peMC = 0;
+            var geMC = 0;
+            var ueMC = 20;
+            studentRef.child('modules').orderByChild('level').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                if (childSnapshot.val().type == 'core') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  coreTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    coreMC += item.mc;
+                  }
+                } else if (childSnapshot.val().type == 'pe') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  peTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    peMC += item.mc;
+                  }
+                } else if (childSnapshot.val().type == 'ge') {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  geTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    geMC += item.mc;
+                  }
+                } else {
+                  var item = childSnapshot.val();
+                  item.key = childSnapshot.key;
+                  ueTemp.push(item);
+                  if (item.status == 'taken' || item.status == 'exempted') {
+                    ueMC += item.mc;
+                  }
+                }
+              });
+            });
+            this.coreMods = coreTemp;
+            this.peMods = peTemp;
+            this.geMods = geTemp;
+            this.ueMods = ueTemp;
+            this.coreMC = coreMC;
+            this.peMC = peMC;
+            this.geMC = geMC;
+            this.ueMC = ueMC;
+          },
+        },
+      mounted() {
+        this.updateMods();
+      },
+      beforeUpdate() {
+        this.updateMods();
+      }
+    });
+
+    /* for logout button */
+    new Vue({
+      el: "#lo_logo",
+      methods: {
+        userLogout: function() {
+          sessionStorage.removeItem("username");
+          window.location.href = "./index.html";
+        }
+      }
+    });
+
+    /* for module add button */
+    var popupWindow = null;
+
+    function centeredPopup(url, winName) {
+      winheight = screen.height ? screen.height / 2 : 700;
+      winwidth = screen.width ? screen.width / 2 : 700;
+      LeftPosition = screen.width ? (screen.width - winwidth) / 2 : 0;
+      TopPosition = screen.height ? (screen.height - winheight) / 2 : 0;
+      settings =
+        "location=no, height=" +
+        winheight +
+        ",width=" +
+        winwidth +
+        ",top=" +
+        TopPosition +
+        ",left=" +
+        LeftPosition +
+        ",scrollbars=no, titlebar=no";
+      popupWindow = window.open(url, winName, settings);
+    }
+
+
+    var modCode = sessionStorage.getItem("modCode")    
+ 
+    
+    var analyticsVue = new Vue({
+      el: "#analytics",
+      data: {
+        allData: {},
+        sem1Grades: {}, //grades obj array
+        sem2Grades: {},
+        sem1GradeList: [], //qty of each grades
+        sem2GradeList: [],
+        GradeList: [],
+        AYList:[],
+        curSem: "", //in the form of 2017-S1
+        avgRating1:0,
+        avgRating2: 0,
+        modCode: modCode,
+        Recommend1: 0, //a percentage e.g. 50%
+        Recommend2: 0,
+        Recommend: 0,
+        Thinking1: 0,
+        Thinking2: 0,
+        Interest1: 0,
+        Interest2: 0,
+        Feedback1: 0,
+        Feedback2: 0,
+        modDiff1: 0,
+        modDiff2: 0,
+        Prof1: "",
+        Prof2: "",
+        Prof: ""
+      },
+      mounted() {
+        db.ref("modules/"+this.modCode)
+          .once("value")
+          .then(snapshot => {
+            this.allData = snapshot.val();
+            this.allData.key = snapshot.key;
+          })
+          .then(() => {
+            this.sem1Grades = this.allData['Sem1_Grades'];
+            this.sem2Grades = this.allData['Sem2_Grades'];
+          })
+          .then(() => {
+            this.sem1GradeList = getGradesList(this.sem1Grades);
+            this.sem2GradeList = getGradesList(this.sem2Grades);
+            //console.log(this.sem2GradeList);
+            console.log(this.allData);
+          })
+          .then(() => {
+            let sem1 = checkAvail1(this.allData['Sem1']);
+            let sem2 = checkAvail2(this.allData['Sem2']);
+            let STI = checkAvailSTI(this.allData['STI'])
+            let STII = checkAvailSTII(this.allData['STII']);
+            console.log(this.curSem);
+            if (sem1!=""){
+              this.AYList.push(sem1);
+              }
+            if (sem2!=""){
+              this.AYList.push(sem2);
+              this.curSem = sem2;
+              this.Recommend = (this.allData['Recommend_2']*100).toFixed(0); //to load graph
+              this.GradeList = this.allData['Sem2_Grades'];
+              this.Prof = this.allData['Sem2_Lecturer'];
+              }
+            if (this.curSem == "") { //include sem1 as curSem if sem2==""
+                this.curSem = sem1;
+                this.Recommend = (this.allData['Recommend_1']*100).toFixed(0);
+                this.GradeList = this.allData['Sem1_Grades'];
+                this.Prof = this.allData['Sem1_Lecturer'];
+              }
+            //console.log(this.curSem);
+            //console.log(this.sem2GradeList);
+            }).then(() => {
+              this.avgRating1=this.allData['Sem1_ModRev'];
+              this.Recommend1=(this.allData['Recommend_1']*100).toFixed(0);
+              this.Thinking1=this.allData['thinking_1'];
+              this.Feedback1=this.allData['feedback_1'];
+              this.Interest1=this.allData['interest_1'];
+              this.modDiff1 = this.allData['Sem1_Diff'];
+              this.Prof1 = this.allData['Sem1_Lecturer'];
+
+              this.avgRating2=this.allData['Sem2_ModRev'];
+              this.Recommend2=(this.allData['Recommend_2']*100).toFixed(0);
+              this.Thinking2=this.allData['thinking_2'];
+              this.Feedback2=this.allData['feedback_2'];
+              this.Interest2=this.allData['interest_2'];
+              this.modDiff2 = this.allData['Sem2_Diff'];
+              this.Prof2 = this.allData['Sem2_Lecturer'];
+              profChart(this.Recommend);
+              barChart(this.GradeList);
+              //console.log(this.sem1Grades);
+              //console.log(this.sem1GradeList);
+          })
+      },
+      methods: {
+        checkSem1: function(sem1) {
+          if (sem1 == 1) {
+            return "Sem 1 . ";
+          } else {
+            return "";
+          }
+        },
+        checkSem2: function(sem2) {
+          if (sem2 == 1) {
+            return "Sem 2 . ";
+          } else {
+            return "";
+          }
+        },
+        checkSTI: function(STI) {
+          if (STI == 1) {
+            return "Special Term I . ";
+          } else {
+            return "";
+          }
+        },
+        checkSTII: function(STII) {
+          if (STII == 1) {
+            return "Special Term II . ";
+          } else {
+            return "";
+          }
+        },
+        refreshAY: function(currSem) {
+          this.curSem = currSem;
+          let result = currSem.split("-");
+          if (result[1]=="S2"){
+            this.Recommend = this.Recommend2;
+            this.GradeList = this.sem2GradeList;
+            this.Prof = this.Prof2;
+          }
+          else {
+            this.Recommend = this.Recommend1;
+            this.GradeList = this.sem1GradeList;
+            this.Prof = this.Prof1;
+          }
+          profChart(this.Recommend);
+          $('#myChart').remove(); // this is my <canvas> element
+          $('#ChartContainer').append('<canvas id="myChart"><canvas>');
+          barChart(this.GradeList);
+          //console.log(this.Recommend);
+        },
+        generatePrereq: function(prereq) {
+          if (prereq == "NA") {
+            return "";
+          } else {
+            return "Pre-requisites: " + prereq;
+          }
+        },
+        generatePreclu: function(preclusion) {
+          if (preclusion == "NA") {
+            return "";
+          } else {
+            return "Preclusion: " + preclusion;
+          }
+        },
+      }
+      
+    });
+    
+    //Check Availibility
+    checkAvail1 = function(sem1) {
+      if (sem1 == 1) {
+        return "2017-S1";
+      } else {
+        return "";
+      }
+    }
+    checkAvail2 = function(sem2) {
+      if (sem2 == 1) {
+        return "2017-S2";
+      } else {
+        return "";
+      }
+    }
+    checkAvailSTI = function(STI) {
+      if (STI == 1) {
+        return "2017-STI";
+      } else {
+        return "";
+      }
+    }
+    checkAvailSTII = function(STII) {
+      if (STII == 1) {
+        return "2017-STII";
+      } else {
+        return "";
+      }
+    }
+
+
+    getGradesList = function(objArr) {
+      var arrLst = [];
+      let grades = objArr;
+      if (grades == null) {
+        for (let i=0;i<12;i++) {
+          arrLst.push(0);
+        }
+      }
+      else {
+        for (let grade in grades) {
+          //console.log("Check Grade Push");
+          //console.log(grade);
+          arrLst.push(grades[grade]); //This push the qty of each grade into lst
+        }
+      }
+      //console.log(arrLst);
+      return arrLst;
+      
+    }
+
+    profChart = function(percent) {
+      var can = document.getElementById('canvas'),
+          spanProcent = document.getElementById('procent'),
+          c = can.getContext('2d');
+    
+      var posX = can.width / 3,
+          posY = can.height / 4,
+          fps = 1000 / 200,
+          procent = 0,
+          oneProcent = 360 / 100,
+          result = oneProcent * percent;
+      
+      c.lineCap = 'round';
+      arcMove();
+      
+      function arcMove(){
+        var deegres = 0;
+        var acrInterval = setInterval (function() {
+          deegres += 1;
+          c.clearRect( 0, 0, can.width, can.height );
+          procent = deegres / oneProcent;
+
+          spanProcent.innerHTML = procent.toFixed();
+
+          c.beginPath();
+          c.arc( posX, posY, 70, (Math.PI/180) * 270, (Math.PI/180) * (270 + 360) );
+          c.strokeStyle = '#b1b1b1';
+          c.lineWidth = '10';
+          c.stroke();
+
+          c.beginPath();
+          c.strokeStyle = '#3949AB';
+          c.lineWidth = '10';
+          c.arc( posX, posY, 70, (Math.PI/180) * 270, (Math.PI/180) * (270 + deegres) );
+          c.stroke();
+          if( deegres >= result ) clearInterval(acrInterval);
+        }, fps);
+        
+      }
+      
+      
+    }
+
+
+    barChart = function(grades) {
+      
+      let gradesLst = getGradesList(grades);
+      var ctx = document.getElementById("myChart");
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ["A+","A","A-","B+", "B","B-","C+","C","D+","D","F"],
+          datasets: [{
+            label: 'Grades',
+            data: gradesLst,
+            backgroundColor: 'green',
+            borderColor: 'green',
+            borderWidth: 1
+          }]
+        },
+          options: {
+            legend:{
+              display:false,
+            },
+            responsive: false,
+            scales: {
+              xAxes: [{
+                ticks: {
+                  maxRotation: 90,
+                  minRotation: 80
+                }
+              }],
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        });
+    }
+
+      </script>
+  </body>
+</html>
+
+
+
+ 
+

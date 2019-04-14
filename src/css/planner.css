@@ -1,0 +1,482 @@
+/* do not touch the blocks until the next comment */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#cp_navbar {
+  background-color: black;
+}
+
+#welcome {
+  float: left;
+  height: 45px;
+  vertical-align: middle;
+  font-family: calibri light;
+  font-size: 15px;
+  color: white;
+  padding-left: 10px;
+}
+
+#logos {
+  text-align: right;
+  padding-right: 10px;
+  height: 45px;
+  vertical-align: middle;
+  padding-top: 4px;
+}
+
+#md_logo {
+  margin-bottom: 7px;
+  height: 30px;
+  width: 30px;
+  margin-top: 4px;
+}
+
+#pn_logo {
+  height: 22px;
+  width: 22px;
+  margin-bottom: 12px;
+  margin-left: 13px;
+}
+
+#lo_logo {
+  height: 30px;
+  width: 30px;
+  margin-bottom: 8px;
+  margin-left: 10px;
+}
+
+#cp_sidebar {
+  width: 25%;
+  float: left;
+  position: fixed;
+  z-index: 9999;
+}
+
+#cp_addmod {
+  width: calc(50% - 1px);
+  height: 30px;
+  background-color: rgb(255, 217, 102);
+  border-right: 1px solid gray;
+  font-family: calibri light;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  float: left;
+}
+
+#cp_addmod:hover {
+  cursor: pointer;
+}
+
+#cp_rec {
+  width: 50%;
+  height: 30px;
+  background-color: rgb(255, 217, 102);
+  border: none;
+  font-family: calibri light;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  float: left;
+}
+
+#cp_rec:hover {
+  cursor: pointer;
+}
+
+#cp_modbar {
+  background-color: gray;
+  width: 100%;
+  height: calc(100vh - 79px);
+  font-family: calibri light;
+  font-size: 15px;
+  overflow-y: scroll;
+}
+
+#cp_modbar button {
+  cursor: pointer;
+}
+
+#cp_modbar button:disabled {
+  color: transparent;
+  cursor: default;
+}
+
+#cp_modbar ul {
+  width: 100%;
+  padding-left: 0px;
+}
+
+#cp_modbar li {
+  width: 100%;
+  list-style-type: none;
+  white-space: nowrap;
+  background-color: lightgray;
+}
+
+#core_mods_header {
+  display: none;
+}
+
+#core_mods_header:checked + label > div {
+  display: none;
+}
+
+#core_mods_header_lbl {
+  width: 100%;
+}
+
+#core_mods_header_lbl:hover {
+  cursor: pointer;
+}
+
+#prog_ele_header {
+  display: none;
+}
+
+#prog_ele_header:checked + label > div {
+  display: none;
+}
+
+#prog_ele_header_lbl {
+  width: 100%;
+}
+
+#prog_ele_header_lbl:hover {
+  cursor: pointer;
+}
+
+#gene_mod_header {
+  display: none;
+}
+
+#gene_mod_header:checked + label > div {
+  display: none;
+}
+
+#gene_mod_header_lbl {
+  width: 100%;
+}
+
+#gene_mod_header_lbl:hover {
+  cursor: pointer;
+}
+
+#unre_ele_header {
+  display: none;
+}
+
+#unre_ele_header:checked + label > div {
+  display: none;
+}
+
+#unre_ele_header_lbl {
+  width: 100%;
+}
+
+#unre_ele_header_lbl:hover {
+  cursor: pointer;
+}
+
+.modCode {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.modDescription {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+.semOffered {
+  display: inline-block;
+  color: red;
+  vertical-align: middle;
+}
+
+/*Progress Status Bar*/
+#Progress {
+  margin-left: 25%;
+  width: 75%;
+  height: 7%;
+  position: relative;
+  overflow-y: hidden;
+  z-index: 999;
+  margin-bottom: 1%;
+}
+.statuslbl {
+  width: 75%;
+  font-family: "Rockwell";
+  margin-left: 4%;
+}
+
+#statuslbl1 {
+  width: 75%;
+  font-family: "Rockwell";
+  margin-left: 3%;
+}
+
+#statuslbl5 {
+  width: 75%;
+  font-family: "Rockwell";
+  margin-left: 9.5%;
+}
+
+#coreModProgressBar {
+  margin-top: 0.5%;
+  margin-left: 3%;
+  float: left;
+  margin-right: 5%;
+  width: 10%;
+  height: 20px;
+  background-color: dimgray;
+  padding-right: 1.3%;
+  border-radius: 10px;
+}
+
+#PEModProgressBar {
+  margin-top: 0.5%;
+  float: left;
+  margin-right: 11%;
+  width: 10%;
+  height: 20px;
+  background-color: dimgray;
+  padding-right: 1.3%;
+  border-radius: 10px;
+}
+
+#GEModProgressBar {
+  margin-top: 0.5%;
+  float: left;
+  margin-right: 12%;
+  width: 10%;
+  height: 20px;
+  background-color: dimgray;
+  padding-right: 1.3%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#UEModProgressBar {
+  margin-top: 0.5%;
+  float: left;
+  margin-right: 8.5%;
+  width: 10%;
+  height: 20px;
+  background-color: dimgray;
+  padding-right: 1.3%;
+  border-radius: 10px;
+}
+
+#AllModProgressBar {
+  margin-top: 0.5%;
+  float: left;
+  width: 10%;
+  height: 20px;
+  background-color: dimgray;
+  padding-right: 1.3%;
+  border-radius: 10px;
+}
+
+.Bar {
+  width: 0%;
+  height: 14px;
+  background-color: #33cc33;
+  border-radius: 10px 0px 0px 10px;
+  text-align: center;
+  margin-top: 3px;
+  margin-left: 4px;
+  margin-bottom: 0.5px;
+  margin-right: 5px;
+  overflow: hidden;
+}
+
+#Percent {
+  font-size: 12px;
+  font-family: "Rockwell";
+}
+
+#CorePercent {
+  margin-left: 8%;
+  margin-right: 12%;
+}
+
+#PEPercent {
+  margin-right: 20%;
+}
+
+#GEPercent {
+  margin-right: 21%;
+}
+
+#UEPercent {
+  margin-right: 17%;
+}
+
+/* PLanner Table*/
+#main_planner {
+  overflow: auto;
+  height: calc(100vh - 120px);
+}
+
+table {
+  background-color: papayawhip;
+  margin-left: 25.5%;
+  margin-top: 1.5%;
+  margin-bottom: 1%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+table,
+th,
+td {
+  border: 2px solid grey;
+}
+
+.planner_cell {
+  min-width: 200px;
+  position: relative;
+  padding-top: 2%;
+  padding-bottom: 3.5%;
+}
+
+td {
+  max-width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.planner_year {
+  text-align: center;
+  font-weight: bold;
+}
+
+.planner_semester {
+  text-align: center;
+  width: 120px;
+  height: 150px;
+  font-weight: bold;
+}
+
+.planner_addBtn1 {
+  position: absolute;
+  right: 51%;
+  bottom: 2%;
+}
+.planner_addBtn2 {
+  position: absolute;
+  right: 51%;
+  bottom: 2%;
+}
+.planner_addBtn3 {
+  position: absolute;
+  right: 51%;
+  bottom: 2%;
+}
+.planner_addBtn4 {
+  position: absolute;
+  right: 51%;
+  bottom: 2%;
+}
+
+.planner_removeBtn1 {
+  position: absolute;
+  left: 51%;
+  bottom: 2%;
+}
+
+.planner_removeBtn2 {
+  position: absolute;
+  left: 51%;
+  bottom: 2%;
+}
+
+.planner_removeBtn3 {
+  position: absolute;
+  left: 51%;
+  bottom: 2%;
+}
+
+.planner_removeBtn4 {
+  position: absolute;
+  left: 51%;
+  bottom: 2%;
+}
+
+.MClabel {
+  font-size: 12px;
+  font-family: "Rockwell";
+  position: absolute;
+  float: left;
+  top: 2%;
+  color: red;
+}
+
+/*Special term button - add/remove special term,year and clear all*/
+.button {
+  margin-top: 0.5%;
+}
+.planner_specialTermBtn {
+  background-color: white;
+  border-radius: 5px;
+  border: 2px solid Grey;
+  font-size: 80%;
+  font-family: "Rockwell";
+  width: 25.5%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  margin-left: 3px;
+}
+
+.clearBtn {
+  background-color: white;
+  border-radius: 5px;
+  border: 2px solid Grey;
+  font-size: 80%;
+  font-family: "Rockwell";
+  width: 16.5%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  text-align: center;
+}
+
+#recommendedTimeTable {
+  background-color: white;
+  border-radius: 5px;
+  border: 2px solid Grey;
+  font-size: 80%;
+  font-family: "Rockwell";
+  width: 27.5%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+}
+.planner_yearBtn {
+  background-color: white;
+  border-radius: 5px;
+  border: 2px solid Grey;
+  font-size: 80%;
+  font-family: "Rockwell";
+  width: 17%;
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+}
+
+#pre-req {
+  font-size: 12px;
+  font-family: "Rockwell";
+  font-weight: bold;
+  color: firebrick;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
