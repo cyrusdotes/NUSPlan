@@ -223,13 +223,15 @@ body {
   width: 90%;
   margin-bottom: 3%;
   box-align: centre;
-  background-color: #fef9c7;
+  background-color: papayawhip;
+  border-radius: 20px;
 }
 
 #nameRow {
   padding: 2px;
   text-align: center;
   background-color: #fce181;
+  border-radius: 20px 20px 0px 0px;
 }
 
 #desRow {
@@ -272,19 +274,31 @@ body {
 }
 
 #Popularity {
-  background-color: #edeae5;
+  background-color: #ffe998;
   color: black;
   font-size: 16px;
   margin: 15px;
   display: inline-block;
   cursor: pointer;
   padding: 10px 20px;
-  border: 0px;
+  border-radius: 10px;
+  width: 190px;
+  text-align: center;
+  border: 2px solid lightgray;
+}
+
+#Faculty {
+  border-radius: 10px;
 }
 
 #Availability {
   text-align: left;
   margin-left: 20px;
+}
+
+#filtHead {
+  margin-bottom: 5px;
+  font-size: 16px;
 }
 
 #Level {
@@ -302,11 +316,14 @@ body {
   margin-left: 20px;
 }
 .dropbtn {
-  background-color: #edeae5;
+  background-color: lightgray;
   color: black;
   padding: 10px;
   font-size: 16px;
   border: none;
+  border-radius: 10px;
+  width: 190px;
+  text-align: center;
 }
 
 .dropdown {

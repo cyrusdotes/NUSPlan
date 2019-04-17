@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-	<title>NUSPlan</title>
+    <title>NUSPlan</title>
     <link rel="stylesheet" href="./src/css/planner.css" />
     <link rel="stylesheet" href="./src/css/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -38,7 +38,7 @@
           <label id="core_mods_header_lbl" for="core_mods_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">Core Module</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">48/80  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ coreMC }}/80  &#8801;</span>
             </div>
   
             <div>
@@ -96,7 +96,7 @@
           <label id="prog_ele_header_lbl" for="prog_ele_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">Program Electives</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">0/24  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ peMC }}/24  &#8801;</span>
             </div>
   
             <div>
@@ -160,7 +160,7 @@
           <label id="gene_mod_header_lbl" for="gene_mod_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">General Modules</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">8/20  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ geMC }}/20  &#8801;</span>
             </div>
             
             <div>
@@ -223,7 +223,7 @@
           <label id="unre_ele_header_lbl" for="unre_ele_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">Unrestricted Electives</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">30/32  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ ueMC }}/32  &#8801;</span>
             </div>
             
             <div>
@@ -296,48 +296,61 @@
     </div>
   </div>
 
-  <!--Progress-->
-  <div id="Progress">
-  <div id = "ProgressLabel">
-
-    <!--Modules Category-->
-    <label id = "statuslbl1"> Core Modules</label>
-    <label class = "statuslbl"> Program Electives </label>
-    <label class = "statuslbl"> General Education Modules</label>
-    <label class = "statuslbl"> Unrestricted Electives </label>
-    <label id = "statuslbl5"> All</label>
-    </div>
-
-    <!--Progress Bar-->
-    <div class="progressBar" id="coreModProgressBar">
-        <div class="Bar" id="Core"></div>
-    </div>
-    <div class="progressBar" id="PEModProgressBar">
-       <div class="Bar" id="PE"></div>
-    </div>
-    <div class="progressBar" id="GEModProgressBar">
-        <div class="Bar" id="GE"></div>
-    </div>
-    <div class="progressBar" id="UEModProgressBar">
-        <div class="Bar" id="UE"></div>
-    </div>
-    <div class="progressBar" id="AllModProgressBar">
-        <div class="Bar" id="All"></div>
-    </div>
-    <!--Percentage-->
-    <div id="Percent">
-     <label  id="CorePercent">0%</label>
-     <label  id="PEPercent">0%</label>
-     <label  id="GEPercent">0%</label>
-     <label  id="UEPercent">0%</label>
-     <label  id="AllPercent">0%</label>
-    </div>
-  </div>
-
 
   <!--Planner Table-->
-  <div id="main_planner">
-      <table id="planner_table">
+  <div id="main_planner" align="centre">
+    
+  <!--Progress-->
+  <div id="progress_bar">
+  <div id="main_core">
+      <div id = "statuslbl1"> Core Modules</div>
+      <div class="progressBar" id="coreModProgressBar">
+      <div class="Bar" id="Core"></div>
+    </div>
+      <div  id="CorePercent">0%</div>
+  </div>
+  <div id="main_pe">
+    <div class = "statuslbl"> Program Electives </div>
+    <div class="progressBar" id="PEModProgressBar">
+    <div class="Bar" id="PE"></div>
+  </div>
+    <div  id="PEPercent">0%</div>
+</div>
+<div id="main_ge">
+  <div class = "statuslbl"> General Modules</div>
+  <div class="progressBar" id="GEModProgressBar">
+   <div class="Bar" id="GE"></div>
+   </div>
+   <div  id="GEPercent">0%</div>
+</div>
+
+<div id="main_ue">
+ <div class = "statuslbl"> Unrestricted Electives </div>
+ <div class="progressBar" id="UEModProgressBar">
+ <div class="Bar" id="UE"></div>
+ </div>
+ <div id="UEPercent">0%</div>
+</div>
+
+<div id="main_all">
+ <div id = "statuslbl5"> All</div>
+ <div class="progressBar" id="AllModProgressBar">
+ <div class="Bar" id="All"></div>
+</div>
+ <div  id="AllPercent">0%</div>
+</div>
+</div>
+<div id="completeMessage" hidden>Congrats, you are expected to graduate in {{gradYear}} years!</div>
+
+<div id="lastRow">
+<div id="pre-req"></div>
+<div class= "buttonGroup">
+<button id = "recommendedTimeTable" @click =" recommended()">Recommended Timetable</button>
+<button class = "clearBtn" @click= "clearBtn()"> Clear Planner </button>
+</div>
+</div>
+
+      <table align="centre" id="planner_table">
         <thead>
           <tr >
               <th></th>
@@ -360,28 +373,10 @@
       </tbody>       
         </table> 
 
-        <div>
-          <label id="preClu" hidden></label>
-        </div>
           <!--Buttons for below-->
-          <div id="lastRow" style="margin-left:26%; width:100">
-              <div id="btn" style= "float:left;">
-                <div class= "button">
-                  <button id = "planner_specialTermIBtn" class = "planner_specialTermBtn" @click="specialTermI()">Add Special Term I</button>
-                  <button id = "planner_addYear"  class = "planner_yearBtn" @click="addYear()">Add Year</button>
-                  <button id = "recommendedTimeTable" @click ="prePopulate()">Recommended Timetable</button>
-                </div>
-                <div class= "button">
-                  <button id = "planner_specialTermIIBtn"class = "planner_specialTermBtn" @click="specialTermII()">Add Special Term II</button>
-                  <button id = "planner_removeYear" class = "planner_yearBtn" @click= "removeYear()">Remove Year</button>
-                  <button class = "clearBtn" @click= "clearBtn()"> Clear Planner </button>
-                </div>
-
-              </div>
-              <div id="pre-req"></div>
           </div>
       
-</div>
+  </div>
 
   <script src="https://unpkg.com/vue"></script>
   <script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
@@ -425,9 +420,9 @@
         geModsMC:0,
         ueModsMC:0,
         disabledStatus:[true,true,true,true],
-        row: 3, //row number of the table
+        row: 5, //row number of the table
         num_year:4,
-        semesterList: ["Semester 1", "Semester 2"],
+        semesterList: ["Semester 1", "Semester 2","Special Term I","Special Term II"],
         allMods:[],
         mcsList:
         {
@@ -523,6 +518,28 @@
           special2: []
         }],
       },
+      computed:
+      {
+        gradYear:function()
+        {
+          var temp = []
+          for(var i in this.timetable)
+          {
+            console.log(this.timetable[i].length)
+            if(this.timetable[i].length!=0)
+            temp.push(i)
+          }
+          if(temp.length!=0)
+          {
+            var final = temp[temp.length-1]
+            final = final.substring(1,2)
+
+            return final
+          }
+          return 4;
+        }
+        
+      },
 
       firebase: {
         student: studentRef,
@@ -532,94 +549,161 @@
       }, 
 
       methods: {
+        addRecommendedFirebase:function()
+        {
+          var pe = [];
+            var ge = [];
+            var ue = [];
+            studentRef.child('recPE').child('A').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recPE').child('B').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recPE').child('C').child('0').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                pe.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recGE').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                ge.push(childSnapshot.val())
+              });
+            });
+            studentRef.child('recUE').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                ue.push(childSnapshot.val())
+              });
+            });
 
-        //CP MOD BAR
-        modRec: function() {
-            if (confirm('Proceed with our recommended General Modules and Program Electives?')) {
-              var pe = [];
-              var ge = [];
-              studentRef.child('recPE').child('A').child('0').on('value', function(snapshot) {
-                snapshot.forEach(function(childSnapshot) {
-                  pe.push(childSnapshot.val())
-                });
-              });
-              studentRef.child('recPE').child('B').child('0').on('value', function(snapshot) {
-                snapshot.forEach(function(childSnapshot) {
-                  pe.push(childSnapshot.val())
-                });
-              });
-              studentRef.child('recPE').child('C').child('0').on('value', function(snapshot) {
-                snapshot.forEach(function(childSnapshot) {
-                  pe.push(childSnapshot.val())
-                });
-              });
-              studentRef.child('recGE').on('value', function(snapshot) {
-                snapshot.forEach(function(childSnapshot) {
-                  ge.push(childSnapshot.val())
-                });
-              });
-              
-              this.peMods.forEach(function(element) {
+            this.peMods.forEach(function(element) {
+              if (pe.indexOf(element.key) >= 0) {
                 pe = pe.filter(function(value, index, arr){
                     return value != element.key;
                 });
-              });
-              this.geMods.forEach(function(element) {
-                ge = ge.filter(function(value, index, arr){
-                    return value.substring(0,3) != element.key.substring(0,3);
-                });
-              });
+              }
 
-              pe.forEach(function(element) {
-                db.ref('modules').child(element).on("value", function(snapshot) {
-                  var credit = snapshot.val().Credits;
-                  var level = element.match(/\d/)[0];
-                  var name = snapshot.val().Name;
-                  var item = {
-                    exam: "-",
-                    grade: "-",
-                    status: "pending"
-                  };
-                  item["mc"] = credit;
-                  item["name"] = name;
-                  item["level"] = level;
-                  item["type"] = 'pe';
-                  studentRef
-                    .child("modules")
-                    .child(element)
-                    .push(element);
-                  studentRef
-                    .child("modules")
-                    .child(element)
-                    .set(item);
-                });
+              else {
+                studentRef
+                  .child("modules")
+                  .child(element.key)
+                  .set(null);
+              }
+            });
+
+            this.geMods.forEach(function(element) {
+              if (ge.indexOf(element.key) < 0 && element.status == 'pending') {
+                studentRef
+                  .child("modules")
+                  .child(element.key)
+                  .set(null);
+              }
+
+              ge = ge.filter(function(value, index, arr){
+                  return value.substring(0,3) != element.key.substring(0,3);
               });
-              ge.forEach(function(element) {
-                db.ref('modules').child(element).on("value", function(snapshot) {
-                  var credit = snapshot.val().Credits;
-                  var level = element.match(/\d/)[0];
-                  var name = snapshot.val().Name;
-                  var item = {
-                    exam: "-",
-                    grade: "-",
-                    status: "pending"
-                  };
-                  item["mc"] = credit;
-                  item["name"] = name;
-                  item["level"] = level;
-                  item["type"] = 'ge';
-                  studentRef
-                    .child("modules")
-                    .child(element)
-                    .push(element);
-                  studentRef
-                    .child("modules")
-                    .child(element)
-                    .set(item);
+            });
+
+            this.ueMods.forEach(function(element) {
+              if (ue.indexOf(element.key) >= 0) {
+                ue = ue.filter(function(value, index, arr){
+                    return value != element.key;
                 });
+              }
+
+              else {
+                studentRef
+                  .child("modules")
+                  .child(element.key)
+                  .set(null);
+              }
+            });
+
+            pe.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'pe';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
               });
-            }
-          },
+            });
+            ge.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'ge';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
+              });
+            });
+            ue.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'ue';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
+              });
+            });
+        },
+
+        //CP MOD BAR
+        modRec: function() {
+          if (confirm('Proceed with our recommended General Modules and Program Electives?')) {
+            this.addRecommendedFirebase();
+          }
+ 
+        },
           
           updateMods: function() {
             this.coreMods = [];
@@ -633,7 +717,7 @@
             var coreMC = 0;
             var peMC = 0;
             var geMC = 0;
-            var ueMC = 20;
+            var ueMC = 0;
             studentRef.child('modules').orderByChild('level').on('value', function(snapshot) {
               snapshot.forEach(function(childSnapshot) {
                 if (childSnapshot.val().type == 'core') {
@@ -677,10 +761,136 @@
             this.ueMC = ueMC;
           },
         deleteMod: function(mod) {
+          console.log("hasa")
+          console.log(this.timetable)
+          var row = 0;
+          var col = 0;
             if (confirm('Are you sure you want to delete ' + mod.key + ',\n' + mod.name + '?')) {
-              studentRef.child('modules').child(mod.key).set(null);
+              for(var i in this.timetable)
+              {
+                for(var j of this.timetable[i])
+                {
+                  var result = j
+                  var pos = this.timetable[i].indexOf(result)
+                  var index = result.indexOf("-") //find index of  dash, "-"
+                  var result = result.slice(0,index-1) //module code
+                  if(mod.key==result)
+                  {
+                    this.timetable[i].splice(pos,1)
+                    row = i.substring(3,4)
+                    col = i.substring(1,2)
+                    break;
+                  }
+                }
+              }
+
+            console.log(row,col,"ss")
+          //Update total MCs
+          this.updateCellMCs_deleteMod(row,col,result)
+          //Update to firebase
+          this.updateFirebaseTimetable(row,col);
+          //Update to planner Table
+          this.readFirebaseTimetable2(row,col)
+          //Update Progress Bar
+          this.default_progressBar()
+          //Check prereq
+          this.checkReq();
+          //delete from module bar
+
+          studentRef.child('modules').child(mod.key).set(null);
             }
           },
+          readFirebaseTimetable2: async function(row,col)//Read firebase timetable
+          {
+            var table = document.getElementById("planner_table");
+            var key = "y"+col+"s"+row
+            var year = col
+            var sem = row
+            var nCell = table.rows[sem].cells[year]
+            console.log("row",row,"col",col)
+            console.log(nCell)
+
+            var labelname = "label_"+sem+"_"+year
+            var chkboxname = "chk_"+sem+"_"+year
+            var brkname = "brk_"+sem+"_"+year
+
+            var i  =document.getElementsByClassName(labelname).length-1
+                while(i>-1)
+                {
+                  var child1 = document.getElementsByClassName(labelname)[i]
+                  var child2 = document.getElementsByClassName(chkboxname)[i]
+                  var child3 = document.getElementsByClassName(brkname)[i]
+
+                  nCell.removeChild(child1)
+                  nCell.removeChild(child2) 
+                  nCell.removeChild(child3)
+                  i--
+                }
+            if (sem==1){
+              this.semesters[year-1].semester1=[];
+            } else if(sem==2){
+              this.semesters[year-1].semester2=[];
+            } else if(sem==3){
+              this.semesters[year-1].special1=[];
+            }else {
+              this.semesters[year-1].special2=[];
+            }
+            var temp = this.allMods;
+            studentRef.child('timetable/'+key).on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                temp.push(childSnapshot.val())
+              
+                //Create label
+                var label = document.createElement("LABEL");
+                label.innerHTML = childSnapshot.val()
+                label.setAttribute("class",labelname)
+                label.setAttribute("title",childSnapshot.val())
+                label.style.fontSize = "12px";
+
+                //Create Checkbox and set attribute
+                var chkbox = document.createElement("INPUT");
+                chkbox.setAttribute("type", "checkbox");
+                chkbox.setAttribute("class",chkboxname)
+                chkbox.setAttribute("value",childSnapshot.val())
+                
+                //Append to respective cell
+                nCell.appendChild(chkbox)
+                nCell.appendChild(label) 
+                var brk = document.createElement("br");
+                brk.setAttribute("class",brkname)
+                nCell.appendChild(brk) 
+                console.log(this.timetable);
+                var index = label.title.indexOf("-") //find index of  dash, "-"
+            var result = label.title.slice(0,index-1)
+            //console.log(result) //module code
+            this.plan.addModule(result,year,sem);
+            //console.log(this.plan.semesters);
+              });
+
+            });
+            this.allMods=temp;
+            console.log(this.allMods)
+        },
+          updateCellMCs_deleteMod:function(row,col,result)
+          {
+            var key ="y"+col+"s"+row
+            var totalMCs = this.mcsList[key]
+            var moduleRef = db.ref("modules/"+result);
+              moduleRef.on('value', function(snapshot) {
+              var mcs = snapshot.val()['Credits'];
+              totalMCs-=mcs;
+
+              document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML=""
+              document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML ="Total MCs:"+totalMCs
+              });
+
+              var result2 = document.getElementById("planner_mcLabel"+row+"_"+col).innerHTML
+            var index = result2.indexOf(":")
+            var totalMCs = parseInt(result2.slice(index+1),10)
+            this.mcsList[key] = totalMCs;
+            this.updateFirebaseMCs();
+          },
+
           checkMod: function(status) {
             if (status == 'pending' || status == 'unfulfilled') {
               return false;
@@ -934,7 +1144,7 @@
             var index = result.indexOf("-") //find index of  dash, "-"
             var result = result.slice(0,index-1) //module code
             //this.addModule(result.trim(),col,row); //added to vue data
-            var preclusionmsg=this.checkPre(result,col,row);
+            //var preclusionmsg=this.checkPre(result,col,row);
             
           }
 
@@ -975,6 +1185,7 @@
 
           //Pre-requsiite
           this.checkReq();
+          console.log(this.timetable,"here")
 
         },
         updateCellMCs_Add:function(row,col) //Update MCs in respective cell
@@ -1099,7 +1310,8 @@
           this.progressbarGEM = gem
           this.progressbarUE = ue
           this.progressbarAll = all
-
+          if(this.progressbarAll==160 && this.hasNoReq())
+          document.getElementById("completeMessage").removeAttribute("hidden")
         },
         
 
@@ -1244,6 +1456,10 @@
           this.progressbarGEM = gem;
           this.progressbarUE = ue;
           this.progressbarAll = all;
+          if(this.progressbarAll<160)
+          document.getElementById("completeMessage").setAttribute("hidden",true)
+          else
+          document.getElementById("completeMessage").setAttribute("hidden")
         },
 
         updateCellMCs_Remove:function(row,col)
@@ -1376,11 +1592,13 @@
           //Add Year Column
           //Add Year Column
           addYear: function() {
+            console.log("add########")
             var table = document.getElementById("planner_table");
             this.num_year += 1;
             studentRef.update({
               numYear:this.num_year
             });
+
 
             //Maximum can add up to Year 6, this is as per NUS grad requirement
             document.getElementById("planner_removeYear").disabled = false;
@@ -1537,6 +1755,8 @@
             document.getElementById("AllPercent").innerHTML = Math.round(0/160*100)+"%"
             document.getElementById("All").style.width = Math.round(0/160*100)+"px"
 
+            document.getElementById("completeMessage").setAttribute("hidden",true)
+
           },
           updateCellMCs_Clear:function()
           {
@@ -1642,6 +1862,8 @@
             var year = col
             var sem = row
             var nCell = table.rows[sem].cells[year]
+            console.log("row",row,"col",col)
+            console.log(nCell)
 
             var labelname = "label_"+sem+"_"+year
             var chkboxname = "chk_"+sem+"_"+year
@@ -1711,7 +1933,7 @@
                 var brk = document.createElement("br");
                 brk.setAttribute("class",brkname)
                 nCell.appendChild(brk) 
-                console.log(label);
+                console.log(this.timetable);
                 var index = label.title.indexOf("-") //find index of  dash, "-"
             var result = label.title.slice(0,index-1)
             //console.log(result) //module code
@@ -1721,20 +1943,29 @@
 
             });
             this.allMods=temp;
+            console.log(this.allMods)
         },
         default_retrieveTimetable:async function() //populate last saved timetable
         {
 
           var tempYear = this.num_year;
-          await studentRef.child("numYear").on('value', function(snapshot) {
+          studentRef.child("numYear").once('value').then(snapshot=>{
               tempYear = snapshot.val()
-              console.log(tempYear)
+
+          }).then(()=> {
+            this.num_year = tempYear
+            for(var r=1;r<this.row;r++) {
+            for(var col=1;col<=this.num_year;col++) { 
+              console.log(this.num_year,"sdd")
+              this.readFirebaseTimetable(r,col)
+              this.retrieve_mcsFirebase(r,col)
+            }
+          }
           });
-          this.num_year = tempYear;
-          promises=[]
+          this.printReq();
+          /*promises=[]
           for(var r=1;r<this.row;r++) {
             for(var col=1;col<=this.num_year;col++) { 
-              console.log(r,col)
               let p=this.readFirebaseTimetable(r,col)
               let m=this.retrieve_mcsFirebase(r,col)
               promises.push(p);
@@ -1742,17 +1973,14 @@
             }
           }
           var allp=Promise.all(promises);
-        console.log(allp);
-        console.log("chre");
+
         allp.then(function(){
           this.plan.checkReq()
         })
         setTimeout(function() {
-          console.log('the stack is now empty');
-          console.log(allp);
           this.plan.checkReq();
           //console.log(this.plan.semesters)
-        },1000);
+        },1000);*/
 
 
        },
@@ -1768,11 +1996,19 @@
         },
         default_updateCPBar:function() //Update CP Bar to hidden for those modules added for timetable retrieved
         {
-          for(var h=0;h<this.allMods.length;h++)
+          var temp = []
+          for(var i in this.timetable)
+          {
+            for(var j of this.timetable[i])
+            {
+              temp.push(j)
+            }
+          }
+          for(var h=0;h<temp.length;h++)
           {
             for(var i=0;i<document.getElementsByClassName("cp_modbarChkBox").length;i++)
             {
-              if(this.allMods[h]==document.getElementsByClassName("cp_modbarChkBox")[i].value)
+              if(temp[h]==document.getElementsByClassName("cp_modbarChkBox")[i].value)
               {
               document.getElementsByClassName("cp_modbarChkBox")[i].hidden = true
               document.getElementsByClassName("cp_modbarLabel")[i].style.marginLeft = "20px";
@@ -1796,6 +2032,8 @@
                 var index = result.indexOf("-") //find index of  dash, "-"
                 var result = result.slice(0,index-1) //module code
                 studentRef.child('modules/'+result).on('value', function(snapshot) {
+                  console.log(result,"nihaooooo233")
+                  console.log(snapshot.val().type)
                 if (snapshot.val().type == 'core') {
                   core += snapshot.val().mc;
                 } else if (snapshot.val().type == 'pe') {
@@ -1811,7 +2049,7 @@
 
             }
           }
-          var all = core + pe + gem + ue
+          var all = Math.min(84,core) + Math.min(pe,24) + Math.min(gem,20) + Math.min(ue,32)
           //Core
           document.getElementById("CorePercent").innerHTML = Math.round(core/84*100)+"%"
           if(Math.round(core/84*100)>=100)
@@ -1867,7 +2105,8 @@
           this.progressbarGEM = gem
           this.progressbarUE = ue
           this.progressbarAll = all
-
+          if(this.progressbarAll==160)
+          document.getElementById("completeMessage").removeAttribute("hidden")
         },
         retrieve_mcsFirebase:function(row,col)
         {
@@ -1912,9 +2151,7 @@
         }
       },
       //checkReq: function(Addedmodule, currentYear, currentSem) {
-      checkReq: function(){
-        console.log("checkingreqs...")
-        console.log(this.semesters);
+        checkReq: function(){
         var prereqmsgs=[];
           for (var year=1; year<=this.num_year;year++){
             for (var semester=1; semester<=4;semester++){
@@ -1957,13 +2194,27 @@
               }
             }
           }
+          //updating to firebase
+          console.log(prereqmsgs);
+          studentRef.child('preReq').set(prereqmsgs);
+          this.printReq();
+      },
+      printReq:function(){
+          //retrieve from firebase
+          //studentRef.child("preReq").function(snapshot){}
+          //console.log(studentRef)
+          studentRef.child('preReq').once("value").then(function(snapshot){
+            
+            var prereqmsgs=snapshot.val();
+            //snapshot.forEach((r)=>prereqmsgs.push(r.val()));
           //clears exisiting prereq msgs
           let element = document.getElementById("pre-req");
           while (element.firstChild) {
             element.removeChild(element.firstChild);
           }
           //print msgs
-          console.log(prereqmsgs);
+          console.log(prereqmsgs,"checked?");
+          if (!snapshot.exists()){return;}
           for (var msg =0; msg<prereqmsgs.length;msg++){
             var lbl = document.createElement("label")
             lbl.setAttribute("class","prereqWarning")
@@ -1975,40 +2226,11 @@
             div.appendChild(lbl)
             div.appendChild(brk)
           }
-        //check requisites return list of requisites
-        //if newly added module does not fulfill
-        /*var notchecked = Addedmodule.retrieveRequisites();
-        if (notchecked.length === 0) {
-          return "";
-        }
-        var allmodules = this.allmodulelist(currentYear, currentSem);
-        for (var i = 0; i < allmodules.length; i++) {
-          var module = allmodules[i];
-          if (module in notchecked) {
-            notchecked.splice(i, 1);
-            if (notchecked.length === 0) {
-              return "";
-            }
-            break;
-          }
-        }
-        //check if similar modules to preclusions have been taken
-        for (var j = 0; j < notchecked.length; j++) {
-          module = notchecked[j];
-          var preclusions = module.retrievePreclusions();
-          for (var preclusion in preclusions) {
-            if (allmodules.indexOf(preclusion) !== -1) {
-              //preclusion found
-              notchecked.splice(j, 1);
-              if (notchecked.length === 0) {
-                return "";
-              }
-              break;
-            }
-          }
-        }
-        return notchecked; //supposed to return list of unfilled requisites
-      */
+          });
+      },
+      hasNoReq: function(){
+        let element = document.getElementById("pre-req");
+        return !element.firstChild
       },
       checkPre: function(Addedmodule, currentYear, currentSem) {
         var allmodules = this.allmodulelist(currentYear, currentSem);
@@ -2094,7 +2316,6 @@
         //console.log(this.semesters);
         var tempcore=this.coreMods;
         this.clearBtn();
-        console.log(this);
         studentRef.on("value", function(snapshot) {
           var course = snapshot.val()["course"];
           courseRef.on("value",function(snapshot){
@@ -2105,7 +2326,6 @@
                 var semester= year[s];
                 for (var m=0;m<semester.length;m++){
                   var module =semester[m]
-                  console.log(module);
                   //console.log("can't");
                   //console.log(this);
                   //console.log(coreMods);
@@ -2116,8 +2336,6 @@
                         break;
                     }
                   }
-                  console.log("index: "+index);
-                  console.log("corre mod:"+tempcore[index].key);
                   //console.log("html:"+document.getElementsByClassName("cp_modbarChkBox")[index].title)
                   //console.log(this.plan);
                   document.getElementsByClassName("cp_modbarChkBox")[index].checked=true;
@@ -2131,13 +2349,123 @@
            })
          });
         console.log("mission accomplished")
+      },
+      recommended:async function()
+      {
+        if (confirm('Note that the recommended timetable will clear your timetable, do you still wish to proceed?')) 
+        {
+          this.addRecommendedFirebase();
+          this.clearBtn();
+        var course = ""
+        studentRef.child("course").on("value", function(snapshot) {
+          course = snapshot.val()
+        } );
+
+        var listYear = ["y1s1","y1s2","y2s1","y2s2","y3s1","y3s2","y4s1","y4s2"]
+        for(var key of listYear)
+        {
+          var tempList = []
+          await db.ref("courses/"+course+"/Recommended Timetable/"+key).on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                tempList.push(childSnapshot.val())
+              });
+              });
+              this.timetable[key] = tempList 
+  
+        }
+
+
+      this.updateFirebaseTimetable();
+      for(var r=1;r<this.row;r++)
+      {
+        for(var col=1;col<=this.num_year;col++)
+        {
+          this.readFirebaseTimetable(r,col);
+          this.retrieve_mcsFirebase(r,col);
+        }
+      }
+      console.log("nihaoooooo")
+      
+      var listKey = ["y1s1","y1s2","y2s1","y2s2","y3s1","y3s2","y4s1","y4s2"]
+      for(var key of listKey) //Set every sem 20 mcs
+      {
+        this.mcsList[key] = 20;
+      }
+      this.updateFirebaseMCs();
+      this. update_progressBar_receommened();
+
+      for(var i=0;i<document.getElementsByClassName("cp_modbarChkBox").length;i++)
+          {
+            document.getElementsByClassName("cp_modbarChkBox")[i].checked=true
+            document.getElementsByClassName("cp_modbarChkBox")[i].hidden = true
+            document.getElementsByClassName("cp_modbarLabel")[i].style.marginLeft = "20px";
+          }
+        }
+      },
+      update_progressBar_receommened:function()
+      {
+        document.getElementById("CorePercent").innerHTML = Math.round(84/84*100)+"%"
+          if(Math.round(84/84*100)>=100)
+          {
+            document.getElementById("Core").style.width = Math.round(84/84*100)+"px";
+            document.getElementById("Core").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("Core").style.width = Math.round(84/84*100)+"px"
+          
+          //PE
+          document.getElementById("PEPercent").innerHTML = Math.round(24/24*100)+"%"
+          if(Math.round(24/24*100)>=100)
+          {
+            document.getElementById("PE").style.width = Math.round(24/24*100)+"px";
+            document.getElementById("PE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("PE").style.width = Math.round(24/24*100)+"px"
+          
+          //GE    
+          document.getElementById("GEPercent").innerHTML = Math.round(20/20*100)+"%"
+          if(Math.round(20/20*100)>=100)
+          {
+            document.getElementById("GE").style.width = Math.round(20/20*100)+"px"
+            document.getElementById("GE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("GE").style.width = Math.round(20/20*100)+"px"
+          
+          //UE
+          document.getElementById("UEPercent").innerHTML = Math.round(32/32*100)+"%"
+          if(Math.round(32/32*100)>=100)
+          {
+            document.getElementById("UE").style.width = Math.round(32/32*100)+"px"
+            document.getElementById("UE").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("UE").style.width = Math.round(32/32*100)+"px"
+          
+          //All
+          document.getElementById("AllPercent").innerHTML = Math.round(160/160*100)+"%"
+          if(Math.round(160/160*100)>=100)
+          {
+            document.getElementById("All").style.width = Math.round(160/160*100)+"px";
+            document.getElementById("All").style.borderRadius = "10px 10px 10px 10px";
+          }
+          else
+          document.getElementById("All").style.width = Math.round(160/160*100)+"px"
+          
+          this.progressbarCore = 84
+          this.progressbarPE = 24
+          this.progressbarGEM = 20
+          this.progressbarUE = 32
+          this.progressbarAll = 160
+          document.getElementById("completeMessage").removeAttribute("hidden")
+          this.checkReq();
       }
       },
       mounted() {
         this.updateMods();
         this.default_retrieveTimetable();
         this.default_updateTimetable();
-        this.default_updateCPBar();
       },
       beforeUpdate() {
         this.updateMods();

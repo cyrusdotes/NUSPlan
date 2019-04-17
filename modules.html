@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>NUSPlan</title>
+  <title>NUSPlan</title>
 	<link rel="stylesheet" href="./src/css/modules.css">
 	<link rel="stylesheet" href="./src/css/styles.css">
 </head>
@@ -19,6 +19,7 @@
     <div id="logos">
         <a href="./modules.html"><img id="md_logo" src="src/assets/modules_logo.png" alt="modules"/></a>
         <a href="./planner.html"><img id="pn_logo" src="src/assets/planner_logo.png" alt="planner"/></a>
+        <!-- <a href="./settings.html" ><img id="st_logo" src="src/assets/settings_logo.png" alt="settings"/></a> -->
         <img @click="userLogout()" id="lo_logo" src="src/assets/logout_logo.png" alt="settings" style="cursor: pointer;">
     </div>
   </div>
@@ -35,7 +36,7 @@
           <label id="core_mods_header_lbl" for="core_mods_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">Core Module</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">48/80  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ coreMC }}/80  &#8801;</span>
             </div>
   
             <div>
@@ -92,7 +93,7 @@
           <label id="prog_ele_header_lbl" for="prog_ele_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">Program Electives</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">0/24  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ peMC }}/24  &#8801;</span>
             </div>
   
             <div>
@@ -155,7 +156,7 @@
           <label id="gene_mod_header_lbl" for="gene_mod_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">General Modules</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">8/20  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ geMC }}/20  &#8801;</span>
             </div>
             
             <div>
@@ -217,7 +218,7 @@
           <label id="unre_ele_header_lbl" for="unre_ele_header">
             <div style="display:flex; background-color: darkgray; height: 30px; align-items: center;">
               <span style="margin-left: 10px; color: white;">Unrestricted Electives</span>
-              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">30/32  &#8801;</span>
+              <span style="width: 100%; text-align: right; color: white; padding-right: 10px;">{{ ueMC }}/32  &#8801;</span>
             </div>
             
             <div>
@@ -306,8 +307,8 @@
               <h5 id="AvailCredits"> {{ checkSem1(item.Sem1) + "  " +
                   checkSem2(item.Sem2) + "  " + 
                   checkSTI(item.STI) + "  " + checkSTII(item.STII) +
-                  " " + item.Credits + " Credits"}} 
-              </h5>
+                  " " + item.Credits + " Credits"}}
+                </h5>
               <h2 id="Ratings">Average Rating: {{ getRating(item.Sem1_ModRev,item.Sem2_ModRev) }} / 5</h2>
               <br/>
             </div>
@@ -319,8 +320,8 @@
     
     <div class="column" id="refineBar">
       <button @click="sortByRating()" id="Popularity">Sort by Rating</button>
-      <p> </p>
-      <button @click="sortByAlpha()" id="Popularity">Sort by Alphabet</button>
+
+      <button @click="sortByAlpha()" id="Popularity">Sort Alphabetically</button>
       <p> </p>
       <div class="dropdown" id="Faculty">
           <button class="dropbtn">Faculty</button>
@@ -337,7 +338,7 @@
         </div>
 
       <div id="Availability">
-        <h5>Availability</h5>
+        <h5 id="filtHead">Availability</h5>
         <input type="checkbox" @change="tickSem1"> Semester 1 <br>
         <input type="checkbox" @change="tickSem2"> Semester 2 <br>
         <input type="checkbox" @change="tickSTI"> Special Term I <br>
@@ -345,7 +346,7 @@
       </div>
 
       <div id="Level">
-        <h5>Level</h5>
+        <h5 id="filtHead">Level</h5>
         <input type="radio" name = "levelCheck" @click = "tickLevel(0)"> All Levels <br>
         <input type="radio" name = "levelCheck" @click = "tickLevel(1000)"> 1000 <br>
         <input type="radio"  name = "levelCheck" @click = "tickLevel(2000)"> 2000 <br>
@@ -355,13 +356,14 @@
       </div>
   
       <div id="Credits">
-        <h5>Credits</h5> 
+        <h5 id="filtHead">Credits</h5> 
         <input type="radio" name="creditsCheck" @click = "tickCredit(0)"> All Credits <br>
         <input type="radio" name="creditsCheck" @click = "tickCredit(3)"> 1-3 <br>
         <input type="radio" name="creditsCheck" @click = "tickCredit(4)"> 4 <br>
         <input type="radio" name="creditsCheck" @click = "tickCredit(5)"> 5-8 <br>
         <input type="radio" name="creditsCheck" @click = "tickCredit(8)"> >8 <br>
       </div>
+      <br>
 
     </div>
   </div>
@@ -406,6 +408,7 @@
           if (confirm('Proceed with our recommended General Modules and Program Electives?')) {
             var pe = [];
             var ge = [];
+            var ue = [];
             studentRef.child('recPE').child('A').child('0').on('value', function(snapshot) {
               snapshot.forEach(function(childSnapshot) {
                 pe.push(childSnapshot.val())
@@ -426,16 +429,53 @@
                 ge.push(childSnapshot.val())
               });
             });
-            
-            this.peMods.forEach(function(element) {
-              pe = pe.filter(function(value, index, arr){
-                  return value != element.key;
+            studentRef.child('recUE').on('value', function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                ue.push(childSnapshot.val())
               });
             });
+
+            this.peMods.forEach(function(element) {
+              if (pe.indexOf(element.key) >= 0) {
+                pe = pe.filter(function(value, index, arr){
+                    return value != element.key;
+                });
+              }
+
+              else {
+                studentRef
+                  .child("modules")
+                  .child(element.key)
+                  .set(null);
+              }
+            });
+
             this.geMods.forEach(function(element) {
+              if (ge.indexOf(element.key) < 0 && element.status == 'pending') {
+                studentRef
+                  .child("modules")
+                  .child(element.key)
+                  .set(null);
+              }
+
               ge = ge.filter(function(value, index, arr){
                   return value.substring(0,3) != element.key.substring(0,3);
               });
+            });
+
+            this.ueMods.forEach(function(element) {
+              if (ue && ue.indexOf(element.key) >= 0) {
+                ue = ue.filter(function(value, index, arr){
+                    return value != element.key;
+                });
+              }
+
+              else {
+                studentRef
+                  .child("modules")
+                  .child(element.key)
+                  .set(null);
+              }
             });
 
             pe.forEach(function(element) {
@@ -486,6 +526,30 @@
                   .set(item);
               });
             });
+            ue.forEach(function(element) {
+              db.ref('modules').child(element).on("value", function(snapshot) {
+                var credit = snapshot.val().Credits;
+                var level = element.match(/\d/)[0];
+                var name = snapshot.val().Name;
+                var item = {
+                  exam: "-",
+                  grade: "-",
+                  status: "pending"
+                };
+                item["mc"] = credit;
+                item["name"] = name;
+                item["level"] = level;
+                item["type"] = 'ue';
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .push(element);
+                studentRef
+                  .child("modules")
+                  .child(element)
+                  .set(item);
+              });
+            });
           }
         },
         deleteMod: function(mod) {
@@ -519,7 +583,7 @@
             var coreMC = 0;
             var peMC = 0;
             var geMC = 0;
-            var ueMC = 20;
+            var ueMC = 0;
             studentRef.child('modules').orderByChild('level').on('value', function(snapshot) {
               snapshot.forEach(function(childSnapshot) {
                 if (childSnapshot.val().type == 'core') {
